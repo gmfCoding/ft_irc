@@ -1,0 +1,38 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/lib/libft",
+                "${workspaceFolder}/lib/mlx-linux",
+                "${workspaceFolder}/lib/gnl",
+                "${workspaceFolder}/lib/extra",
+                "${workspaceFolder}/inc",
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "intelliSenseMode": "linux-clang-x64",
+            "compilerArgs": [
+                "-D KEYMAP_LINUX"
+            ],
+		
+        },
+		{
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/lib/libft",
+                "${workspaceFolder}/lib/mlx",
+                "${workspaceFolder}/lib/gnl",
+                "${workspaceFolder}/lib/extra",
+                "${workspaceFolder}/inc",
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "intelliSenseMode": "linux-clang-x64",
+            "compilerArgs": [],
+        },
+    ],
+    "version": 4
+}

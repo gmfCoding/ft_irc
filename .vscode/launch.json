@@ -1,0 +1,32 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+            "name": "Launch: Build and Run program",
+            "type": "cppdbg",
+            "request": "launch",
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}/",
+            "externalConsole": false,
+            "MIMode": "lldb",
+			"args": ["21345", "password"],
+			"program": "${workspaceFolder}/ircserv",
+            "preLaunchTask": "Build Debug"
+		},
+		{
+			"type": "lldb",
+			"request": "attach",
+			"name": "LLDB Attach",
+			"program": "${workspaceFolder}/ircserv"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "LLDB Launch",
+			"program": "${workspaceFolder}/ircserv",
+			"args": ["21345", "password"],
+			"cwd": "${workspaceFolder}",
+			"preLaunchTask": "Build Debug"
+		}
+	]
+}
