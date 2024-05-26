@@ -13,3 +13,7 @@ std::string&	IRCClient::getNickname() { return nickname; }
 std::string&	IRCClient::getUsername() { return username; }
 void			IRCClient::setNickname(std::string &nickname) { this->nickname = nickname; }
 void			IRCClient::setUsername(std::string &username) { this->username = username; }
+
+void IRCClient::setFd(int fd) { this->fd = fd; }
+void IRCClient::setIpAddr(const std::string &ipAddr) { this->ipAddr = ipAddr; }
+std::string IRCClient::getIpAddr() { return ipAddr; }

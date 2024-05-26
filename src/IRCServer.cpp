@@ -8,7 +8,9 @@ IRCServer::IRCServer(int port, char *password) : _port(port), _password(password
 
 IRCServer::~IRCServer()
 {
-    close(serverFd);
+	for (auto &client : clients)
+		close(client.second.getFd());
+	close(serverFd);
 }
 
 ErrorCode IRCServer::serverSetup()
@@ -53,24 +55,22 @@ ErrorCode IRCServer::Run()
 		return (this->err);
 	while (true)
 	{
-		int pollCount = poll(pollFds.data(), pollFds.size(), -1);
-		if (pollCount == -1)
+		if((poll(pollFds.data(), pollFds.size(),-1) == -1))
 			return (ERR_POLL);
-		for (size_t i = 0; i < pollFds.size(); i++)
+		//int pollCount = poll(pollFds.data(), pollFds.size(), -1);
+	//	if (pollCount == -1)
+	//		return (ERR_POLL);
+		for (size_t i = 0; i < pollFds.size(); ++i)
 		{
-			if (!&clients[pollFds[i].fd])
-				printf("its here\n");
 			if (pollFds[i].revents & POLLIN)
 			{
 				if (pollFds[i].fd == serverFd)
 				{
-					std::cout << "did i client say hello" << std::endl;
 					clientAccept();
 				}
 				else
 				{
-					printf("give me something please");
-					std::cout << "how about more operations" << std::endl;
+					printf("we made it");
 					clientHandle(clients[pollFds[i].fd]);
 				}
 			}
