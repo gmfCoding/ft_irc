@@ -1,7 +1,9 @@
 SRCSF = $(TEST) \
-		IRCServer.cpp
+		IRCServer.cpp \
+		IRCClient.cpp
 
-INCSF = IRCServer.hpp
+INCSF = IRCServer.hpp \
+		IRCClient.hpp
 
 ifndef $(TEST)
 TEST=main.cpp

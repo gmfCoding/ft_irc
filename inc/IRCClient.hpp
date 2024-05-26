@@ -5,13 +5,13 @@
 
 class IRCClient
 {
-
 private:
 	int			fd;
 	std::string nickname;
 	std::string username;
 	std::string buffer;
 public:
+	IRCClient();
 	IRCClient(int fd);
 	~IRCClient();
 
@@ -20,7 +20,7 @@ public:
 	std::string&	getUsername();
 	void			setNickname(std::string &nickname);
 	void			setUsername(std::string &username);
-	void			addData(std::string &data);
+	void			addData(const std::string &data);
 	std::string 	getData();
 	void			clearData();
 };

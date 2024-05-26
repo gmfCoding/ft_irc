@@ -1,11 +1,12 @@
 #include "IRCClient.hpp"
 
+IRCClient::IRCClient() : fd(-1) {}
 IRCClient::IRCClient(int fd) : fd(fd) { return ; }
 IRCClient::~IRCClient() { close(fd); }
 
 int				IRCClient::getFd() { return fd; }
 std::string		IRCClient::getData() { return buffer; }
-void			IRCClient::addData(std::string &data) { buffer += data; }
+void			IRCClient::addData(const std::string &data) { buffer += data; }
 void			IRCClient::clearData() { buffer.clear(); }
 
 std::string&	IRCClient::getNickname() { return nickname; }
