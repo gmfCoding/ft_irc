@@ -3,7 +3,7 @@
 #include <iostream>
 #include <unistd.h>
 
-class Client
+class IRCClient
 {
 
 private:
@@ -12,8 +12,8 @@ private:
 	std::string username;
 	std::string buffer;
 public:
-	Client(int fd);
-	~Client();
+	IRCClient(int fd);
+	~IRCClient();
 
 	int				getFd();
 	std::string&	getNickname();
