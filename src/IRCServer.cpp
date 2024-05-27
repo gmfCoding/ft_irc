@@ -1,30 +1,62 @@
 #include "IRCServer.hpp"
 
-
+/*
+	run the server setup
+*/
 IRCServer::IRCServer(int port, char *password) : _port(port), _password(password)
 {
 	this->err = serverSetup();
 }
 
+/*
+	on destruction loop through and close remaining cleint fd's
+*/
 IRCServer::~IRCServer()
 {
 	for (auto &client : clients)
+	{
+		std::cout << "closed fd for " << client.first << std::endl;
 		close(client.second.getFd());
+	}
 	close(serverFd);
 }
 
+/*
+	here we create a socked/file desciptor i use a try catch
+	to catch any errors thrown and i return the error code have not set up
+	a good way to handle the error code yet but its something for now
+	and at the moment no error handling done is done on the port number
+	like 0 to 1023 are not meant to be used i believe
+
+	//socket file descriptor
+	socket(AF_INET for ip4, SOCK_STREAM is always used with TCP and both \\
+	parties have connection until connection is terminated by wither party, protocol to be used with the socket)
+
+	//socket options
+	setsocketopt(socket_FD, SOL_SOCKET level- is for protocol independent options, \\
+	SO_REUSEADDR allows for reuse ports quicker, a ptr value for the options, the size is used to say it is enabled);
+
+	change file descriptor operations
+	fcntl(socketFD, set the file statusflag, O_NONBLOCK make in and out operations of the socket return immediately )
+
+	blind is used to set up the address and ports of the socket
+	htons function takes a 16-bit number in host byte order and returns a 16-bit number in network byte order used in TCP/IP networks
+
+	listen is used to set the socket passive SOMAXCONN set the max number allowed in
+	and then i use push_back to add the server to the end of pollFds vector
+*/
 ErrorCode IRCServer::serverSetup()
 {
 	try
 	{
-		struct pollfd NewPoll;
 		serverFd = socket(AF_INET, SOCK_STREAM, 0);
 		int opt = 1;
 		if (serverFd == -1)
 			throw std::runtime_error("Failed to create socket");
 		if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
 			throw std::runtime_error("setsockopt failed");
-		fcntl(serverFd, F_SETFL, O_NONBLOCK);
+		if(fcntl(serverFd, F_SETFL, O_NONBLOCK) == -1)
+			throw std::runtime_error("fcntl failed");
 		serverAddr.sin_family = AF_INET;
 		serverAddr.sin_addr.s_addr = INADDR_ANY;
 		serverAddr.sin_port = htons(_port);
@@ -49,37 +81,43 @@ ErrorCode IRCServer::serverSetup()
 	or there is and error we loop over all the file descriptors and we check if
 	there is data to read with this bad boy (revents & POLLIN) if there is data
 	we accept the new client and add the client to map array of clients
+	revent is returned event here is the struct for poll
+		int    fd       The following descriptor being polled. 
+		short  events   The input event flags . 
+		short  revents  The output event flags .
 */
 ErrorCode IRCServer::Run()
 {
-	static int holdthisindex = 0;
 	if (this->err != ERR_NO_ERROR)
 		return (this->err);
-	while (true)
+	while (true && this->err == ERR_NO_ERROR)
 	{
 		int pollCount = poll(pollFds.data(), pollFds.size(), -1);
 		if (pollCount == -1)
 			return (ERR_POLL);
-		//printf("pollfds = %ld pollFds[i].revents = %d amd POLLIN = %d \n", pollFds.size(), pollFds[holdthisindex].revents, POLLIN);
 		for (size_t i = 0; i < pollFds.size(); ++i)
 		{
 			if (pollFds[i].revents & POLLIN)
 			{
 				if (pollFds[i].fd == serverFd)
-				{
-					holdthisindex = i;
 					clientAccept();
-				}
 				else
-				{
-					printf("we made it");
 					clientHandle(clients[pollFds[i].fd]);
-				}
 			}
 		}
 	}
+	return (ERR_NO_ERROR);
 }
 
+
+/*
+	takes in clients and put them in the client map container which we can use later
+	for and it allows fast retrieval of individual elements based on their keys,
+	at the moment we just accept the client and dont pass in any client information
+	but we can use those nullptr to pass in more information from the client
+	we add the fd to the pollfds so we can check it for data in our loop
+
+*/
 void	IRCServer::clientAccept()
 {
 	int clientFd = accept(serverFd, nullptr, nullptr);
@@ -87,26 +125,30 @@ void	IRCServer::clientAccept()
 		return ;
 	if(fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1)
 	{
-		std::cerr << "Failed to set socket to non-blocking mode: " << strerror(errno) << std::endl;
 		this->err = ERR_FCNTL;
 		return ;
 	}
-	printf("clinentfd = %d\n", clientFd);
 	pollFds.push_back({clientFd, POLLIN, 0});
 	clients[clientFd] = IRCClient(clientFd);
 	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
 }
 
+/*
+	removes client and closed fd's, and removes from the pollfds
+	remove_if Remove elements from range
+*/
 void IRCServer::clientRemove(int clientFd)
 {
 	close(clientFd);
-	pollFds.erase(std::remove_if(pollFds.begin(), pollFds.end(), [clientFd](pollfd &pfd)
-	{
-		return pfd.fd == clientFd;
-	}), pollFds.end());
+	pollFds.erase(std::remove_if(pollFds.begin(), pollFds.end(), [clientFd](pollfd &pfd){ return pfd.fd == clientFd; }), pollFds.end());
 	clients.erase(clientFd);
 }
 
+/*
+	here is here we read the data
+	recv is used to retrieve data from a connection
+	recv(file descriptor of client, a place to store the data, the max sife of the data length, optional flag)
+*/
 void IRCServer::clientHandle(IRCClient &client)
 {
 	char buffer[512];
@@ -118,10 +160,10 @@ void IRCServer::clientHandle(IRCClient &client)
 	}
 	buffer[bytesRead] = '\0';
 	client.addData(buffer);
-
-
 	std::cout << "Received data from client " << client.getFd() << ": " << buffer << std::endl;
+
+
 	// add some client magic here ;)
 
+	//maybe clearData after
 }
-

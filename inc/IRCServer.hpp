@@ -31,9 +31,6 @@ private:
 	int			_port;
 	char		*_password;
 	ErrorCode	serverSetup();
-//	void		acceptClient();
-//	void		handleClient(IRCClient &client);
-//	void		removeClient(int clientFd);
 	void		clientAccept();
 	void		clientHandle(IRCClient &client);
 	void		clientRemove(int clientFd);
