@@ -17,6 +17,7 @@ ErrorCode IRCServer::serverSetup()
 {
 	try
 	{
+		struct pollfd NewPoll;
 		serverFd = socket(AF_INET, SOCK_STREAM, 0);
 		int opt = 1;
 		if (serverFd == -1)
@@ -51,21 +52,22 @@ ErrorCode IRCServer::serverSetup()
 */
 ErrorCode IRCServer::Run()
 {
+	static int holdthisindex = 0;
 	if (this->err != ERR_NO_ERROR)
 		return (this->err);
 	while (true)
 	{
-		if((poll(pollFds.data(), pollFds.size(),-1) == -1))
+		int pollCount = poll(pollFds.data(), pollFds.size(), -1);
+		if (pollCount == -1)
 			return (ERR_POLL);
-		//int pollCount = poll(pollFds.data(), pollFds.size(), -1);
-	//	if (pollCount == -1)
-	//		return (ERR_POLL);
+		//printf("pollfds = %ld pollFds[i].revents = %d amd POLLIN = %d \n", pollFds.size(), pollFds[holdthisindex].revents, POLLIN);
 		for (size_t i = 0; i < pollFds.size(); ++i)
 		{
 			if (pollFds[i].revents & POLLIN)
 			{
 				if (pollFds[i].fd == serverFd)
 				{
+					holdthisindex = i;
 					clientAccept();
 				}
 				else
@@ -89,9 +91,10 @@ void	IRCServer::clientAccept()
 		this->err = ERR_FCNTL;
 		return ;
 	}
+	printf("clinentfd = %d\n", clientFd);
 	pollFds.push_back({clientFd, POLLIN, 0});
 	clients[clientFd] = IRCClient(clientFd);
-	std::cout << "Accepted client connection, FD: " << clientFd << std::endl;
+	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
 }
 
 void IRCServer::clientRemove(int clientFd)

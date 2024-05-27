@@ -39,7 +39,7 @@ private:
 	void		clientRemove(int clientFd);
 	int			serverFd;
 	struct sockaddr_in			serverAddr;
-	std::vector<pollfd>			pollFds;
+	std::vector<struct pollfd>	pollFds;
 	std::map<int, IRCClient>	clients;
 
 public:

@@ -6,19 +6,17 @@
 class IRCClient
 {
 private:
-	int			fd;
 	std::string	ipAddr;
 	std::string nickname;
 	std::string username;
 	std::string buffer;
 public:
+	int			fd;
 	IRCClient();
-	IRCClient(int fd);
+	IRCClient(int clientFd);
 	~IRCClient();
-
-
-	void			setFd(int fd);
-	int				getFd();
+	void			setFd(int clientFd);
+	int				getFd() const;
 	std::string&	getNickname();
 	std::string&	getUsername();
 	std::string		getIpAddr();
