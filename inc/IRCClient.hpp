@@ -6,12 +6,12 @@
 class IRCClient
 {
 private:
+	int			fd;
 	std::string	ipAddr;
 	std::string nickname;
 	std::string username;
 	std::string buffer;
 public:
-	int			fd;
 	IRCClient();
 	IRCClient(int clientFd);
 	~IRCClient();
