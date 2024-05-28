@@ -13,11 +13,14 @@ IRCServer::IRCServer(int port, char *password) : _port(port), _password(password
 */
 IRCServer::~IRCServer()
 {
-	for (auto &client : clients)
-	{
-		std::cout << "closed fd for " << client.first << std::endl;
-		close(client.second.getFd());
-	}
+//	for (auto &client : clients)
+//	{
+//		std::cout << "closed fd for " << client.first << std::endl;
+//		close(client.second.getFd());
+//	}
+	//std::map<int, IRCClient>::iterator it;
+	//for (it = clients.begin(); it != clients.end(); ++it)
+	//	IRCClient& client = it->second;
 	close(serverFd);
 }
 
@@ -64,7 +67,11 @@ ErrorCode IRCServer::serverSetup()
 			throw std::runtime_error("Bind failed");
 		if (listen(serverFd, SOMAXCONN) == -1)
 			throw std::runtime_error("Listen failed");
-		pollFds.push_back({serverFd, POLLIN, 0});
+		struct pollfd serverPollFd;
+    	serverPollFd.fd = serverFd;
+    	serverPollFd.events = POLLIN;
+    	serverPollFd.revents = 0;
+		pollFds.push_back(serverPollFd);
 	}
 	catch(const std::exception& e)
 	{
@@ -92,6 +99,7 @@ ErrorCode IRCServer::Run()
 		return (this->err);
 	while (true && this->err == ERR_NO_ERROR)
 	{
+		//int pollCount = poll(pollFds.data(), pollFds.size(), 100);
 		int pollCount = poll(pollFds.data(), pollFds.size(), -1);
 		if (pollCount == -1)
 			return (ERR_POLL);
@@ -128,8 +136,13 @@ void	IRCServer::clientAccept()
 		this->err = ERR_FCNTL;
 		return ;
 	}
-	pollFds.push_back({clientFd, POLLIN, 0});
-	clients[clientFd] = IRCClient(clientFd);
+	struct pollfd clientPollFd;
+    clientPollFd.fd = clientFd;
+    clientPollFd.events = POLLIN;
+    clientPollFd.revents = 0;
+	pollFds.push_back(clientPollFd);
+	//pollFds.push_back({clientFd, POLLIN, 0});
+	clients[clientFd] = new IRCClient(clientFd);
 	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
 }
 
@@ -140,7 +153,14 @@ void	IRCServer::clientAccept()
 void IRCServer::clientRemove(int clientFd)
 {
 	close(clientFd);
-	pollFds.erase(std::remove_if(pollFds.begin(), pollFds.end(), [clientFd](pollfd &pfd){ return pfd.fd == clientFd; }), pollFds.end());
+	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
+	{
+        if (it->fd == clientFd) {
+            pollFds.erase(it);
+            break;
+        }
+    }
+	delete clients.at(clientFd);
 	clients.erase(clientFd);
 }
 
@@ -149,18 +169,18 @@ void IRCServer::clientRemove(int clientFd)
 	recv is used to retrieve data from a connection
 	recv(file descriptor of client, a place to store the data, the max sife of the data length, optional flag)
 */
-void IRCServer::clientHandle(IRCClient &client)
+void IRCServer::clientHandle(IRCClient* client)
 {
 	char buffer[512];
-	int bytesRead = recv(client.getFd(), buffer, sizeof(buffer) - 1, 0);
+	int bytesRead = recv(client->getFd(), buffer, sizeof(buffer) - 1, 0);
 	if (bytesRead <= 0)
 	{
-		clientRemove(client.getFd());
+		clientRemove(client->getFd());
 		return;
 	}
 	buffer[bytesRead] = '\0';
-	client.addData(buffer);
-	std::cout << "Received data from client " << client.getFd() << ": " << buffer << std::endl;
+	client->addData(buffer);
+	std::cout << "Received data from client " << client->getFd() << ": " << buffer << std::endl;
 
 
 	// add some client magic here ;)

@@ -32,12 +32,12 @@ private:
 	char		*_password;
 	ErrorCode	serverSetup();
 	void		clientAccept();
-	void		clientHandle(IRCClient &client);
+	void		clientHandle(IRCClient* client);
 	void		clientRemove(int clientFd);
 	int			serverFd;
 	struct sockaddr_in			serverAddr;
 	std::vector<struct pollfd>	pollFds;
-	std::map<int, IRCClient>	clients;
+	std::map<int, IRCClient*>	clients;
 
 public:
     IRCServer(int port, char *password);

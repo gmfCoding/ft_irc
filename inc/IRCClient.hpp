@@ -26,9 +26,7 @@ public:
 	void			addData(const std::string &data);
 	std::string 	getData();
 	void			clearData();
-
-	IRCClient& operator=(IRCClient&& other) noexcept;
-
+	void			copyAndInvalidateFd(const IRCClient& other);
 };
 
 
