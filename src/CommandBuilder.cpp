@@ -27,7 +27,6 @@ void CommandBuilder::initializeCommands()
 	availableCommands.push_back(Command("PASS", AuthLevel::AuthPublic, Command::handlePassCommand));
 	availableCommands.push_back(Command("JOIN", AuthLevel::AuthUser, Command::handleJoinCommand));
 	availableCommands.push_back(Command("PRIVMSG", AuthLevel::AuthUser, Command::handlePrivmsgCommand));
-	availableCommands.push_back(Command("NOTICE", AuthLevel::AuthUser, Command::handleNoticeCommand));
 	availableCommands.push_back(Command("QUIT", AuthLevel::AuthPublic, Command::handleQuitCommand));
 	availableCommands.push_back(Command("MODE", AuthLevel::AuthUser, Command::handleModeCommand));
 	availableCommands.push_back(Command("TOPIC", AuthLevel::AuthUser, Command::handleTopicCommand));
