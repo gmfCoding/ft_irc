@@ -1,5 +1,6 @@
 #include "IRCServer.hpp"
 
+
 /*
 	run the server setup
 */
@@ -117,7 +118,6 @@ ErrorCode IRCServer::Run()
 	return (ERR_NO_ERROR);
 }
 
-
 /*
 	takes in clients and put them in the client map container which we can use later
 	for and it allows fast retrieval of individual elements based on their keys,
@@ -172,18 +172,40 @@ void IRCServer::clientRemove(int clientFd)
 void IRCServer::clientHandle(IRCClient* client)
 {
 	char buffer[512];
-	int bytesRead = recv(client->getFd(), buffer, sizeof(buffer) - 1, 0);
+	int bytesRead = recv(client->GetFd(), buffer, sizeof(buffer) - 1, 0);
 	if (bytesRead <= 0)
 	{
-		clientRemove(client->getFd());
+		clientRemove(client->GetFd());
 		return;
 	}
 	buffer[bytesRead] = '\0';
 	client->addData(buffer);
-	std::cout << "Received data from client " << client->getFd() << ": " << buffer << std::endl;
+	//std::cout << "Received data from client " << client->GetFd() << ": " << buffer << std::endl;
 
-
-	// add some client magic here ;)
+    //clientSendData(client->GetFd(), join_msg);
+	//std::string welcomeMsg = "Welcome to the IRC server!\r\n";
+    //clientSendData(client->GetFd(), welcomeMsg);
+	CommandBuilder commandBuilder(this);
+	commandBuilder.processCommand(client, buffer);
 
 	//maybe clearData after
+}
+
+/*
+	the send fucntion  take in the clients socket fd and can only be used it the socket is
+	connected
+	sockets operate at the byte level and can only transmit raw bytes so we may have to converting data to binary format
+	for bonus here
+*/
+void	IRCServer::clientSendData(int clientFd, const std::string& data)
+{
+    std::string formattedData = data + "\r\n"; // IRC messages end with CRLF
+    ssize_t bytesSent = send(clientFd, formattedData.c_str(), formattedData.size(), 0);
+    if (bytesSent == -1)
+	{
+		this->err = ERR_SEND;
+        std::cout << "failed to send data to client" << std::endl;
+		// TODO: handle errors properly maybe remove client
+		//clientRemove(clientFd);
+    }
 }
