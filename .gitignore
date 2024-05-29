@@ -1,6 +1,7 @@
 ircserv
 
 .DS_Store
+.vscode
 **/_**/
 **/*.built
 
