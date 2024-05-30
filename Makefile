@@ -8,6 +8,7 @@ SRCSF = $(TEST) \
 INCSF = IRCServer.hpp \
 		IRCClient.hpp \
 		IRCChannel.hpp \
+		IRCRespondMacros.hpp \
 		CommandBuilder.hpp \
 		Command.hpp \
 		AuthLevel.hpp 

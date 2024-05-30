@@ -2,6 +2,7 @@
 # define COMMAND_HPP
 # include <vector>
 # include <functional>
+# include "IRCRespondMacros.hpp"
 # include "AuthLevel.hpp"
 # include "IRCClient.hpp"
 
