@@ -51,22 +51,49 @@ void Command::handlePassCommand(IRCClient* client, const std::vector<std::string
 
 void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
-    std::cout << "Handling JOIN command" << std::endl;
-        if (parameters.empty())
-    {
-        // Send error message to client about missing channel name
+    // Check if the JOIN command has the correct number of parameters
+    if (parameters.size() < 1) {
+        // Send ERR_NEEDMOREPARAMS response to the client
+        client->GetServer()->clientSendData(client->GetFd(),"461 JOIN Not enough parameters");
         return;
     }
 
+    // Extract the channel name from the parameters
     std::string channelName = parameters[0];
-    //IRCServer* server = client->getServer();
-    //server->addChannel(channelName);
-    //Channel* channel = server->getChannel(channelName);
-    //if (channel)
+
+    // TODO: check if the channel name is valid length <= 200)
+    // Example validation:
+    if (channelName.empty() || (channelName[0] != '&' && channelName[0] != '#'))
+    {
+        client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));
+        return;
+    }
+
+    // TODO: check if the channel exists or create a new channel
+    //if (!channelExists(channelName))
     //{
-    //    channel->addMember(client);
-    //    // send confirmation to client about joining the channel
+    //    createChannel(channelName);
     //}
+
+    // TODO: check if the client meets the conditions to join the channel
+    // Example:
+    // if (!canJoinChannel(client, channelName)) {
+    //     sendErrorToClient(client, "You cannot join the channel");
+    //     return;
+    // }
+
+    // TODO: add the client to the channel
+    // Example:
+    // addClientToChannel(client, channelName);
+
+    // TODO: broadcast JOIN message to all clients in the channel
+    // Example:
+    // broadcastJoinMessage(client, channelName);
+
+    // TODO: send the channel's topic and member list to the joining client
+    // Example:
+    // sendChannelInfoToClient(client, channelName);
+    //client->sendData("JOIN :" + channelName);
 }
 
 void Command::handlePartCommand(IRCClient* client, const std::vector<std::string>& parameters)
