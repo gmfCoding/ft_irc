@@ -31,6 +31,7 @@ public:
 	static void			handleTopicCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleInviteCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleKickCommand(IRCClient* client, const std::vector<std::string>& parameters);
+    static void			handlePartCommand(IRCClient* client, const std::vector<std::string>& parameters);
 
 };
 

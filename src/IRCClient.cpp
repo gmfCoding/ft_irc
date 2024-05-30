@@ -1,7 +1,7 @@
 #include "IRCClient.hpp"
 
 //IRCClient::IRCClient() : fd(-1) {}
-IRCClient::IRCClient(int clientFd) : fd(clientFd) {	this->authLevel = AuthPublic; return ; }
+IRCClient::IRCClient(int clientFd, IRCServer* server) : fd(clientFd), server(server) {	this->authLevel = AuthPublic; return ; }
 
 IRCClient::~IRCClient()
 {
@@ -22,5 +22,6 @@ void			IRCClient::SetIpAddr(const std::string &ipAddr) { this->ipAddr = ipAddr; 
 std::string		IRCClient::GetIpAddr() { return ipAddr; }
 AuthLevel		IRCClient::GetAuthLevel() const { return authLevel; }
 void			IRCClient::SetAuthLevel(AuthLevel level) { authLevel = level; }
+IRCServer*		IRCClient::GetServer() const { return server; }
 
 

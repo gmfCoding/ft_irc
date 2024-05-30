@@ -6,6 +6,8 @@
 # include <map>
 # include "IRCClient.hpp"
 
+class IRCClient;
+
 class IRCChannel
 {
 private:
@@ -14,11 +16,12 @@ private:
 	std::set<IRCClient*>		operators;
 
 public:
+	IRCChannel();
 	IRCChannel(const std::string& channelName);
 	~IRCChannel();
-	const std::string&			GetName() const { return name; }
-	const std::set<IRCClient*>& GetMembers() const { return members; }
-	const std::set<IRCClient*>& GetOperators() const { return operators; }
+	const std::string&			GetName() const;
+	const std::set<IRCClient*>& GetMembers() const;
+	const std::set<IRCClient*>& GetOperators() const;
 	void						addMember(IRCClient* client);
 	void						removeMember(IRCClient* client);
 	void						addOperator(IRCClient* client);

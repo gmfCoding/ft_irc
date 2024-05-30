@@ -8,9 +8,12 @@ CommandBuilder::CommandBuilder(IRCServer* server) : server(server)
 }
 CommandBuilder::~CommandBuilder() { return ; }
 
-void    CommandBuilder::processCommand(IRCClient* client, const std::string& buffer)
+void CommandBuilder::processCommand(IRCClient* client, const std::string& buffer)
 {
     std::vector<std::string> tokens = tokenizeBuffer(buffer);
+    if (tokens.empty())
+        return;
+
     std::string command = extractCommand(tokens);
     std::vector<std::string> parameters = extractParameters(tokens);
     AuthLevel authLevel = client->GetAuthLevel();
@@ -32,15 +35,26 @@ void CommandBuilder::initializeCommands()
 	availableCommands.push_back(Command("TOPIC", AuthLevel::AuthUser, Command::handleTopicCommand));
 	availableCommands.push_back(Command("INVITE", AuthLevel::AuthUser, Command::handleInviteCommand));
 	availableCommands.push_back(Command("KICK", AuthLevel::AuthUser, Command::handleKickCommand));
+	availableCommands.push_back(Command("PART", AuthLevel::AuthUser, Command::handlePartCommand));
 }
+
 
 std::vector<std::string> CommandBuilder::tokenizeBuffer(const std::string& buffer)
 {
     std::vector<std::string> tokens;
     std::stringstream ss(buffer);
     std::string token;
-    while (std::getline(ss, token, ' '))
-	{
+
+    while (ss >> token)
+    {
+        if (token.front() == ':')
+        {
+            std::string rest;
+            std::getline(ss, rest);
+            token += rest;
+            tokens.push_back(token);
+            break;
+        }
         tokens.push_back(token);
     }
     return tokens;

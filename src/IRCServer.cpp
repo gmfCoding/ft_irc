@@ -24,6 +24,7 @@ IRCServer::~IRCServer()
 	//	IRCClient& client = it->second;
 	close(serverFd);
 }
+char*	IRCServer::GetPassword() { return(this->_password); }
 
 /*
 	here we create a socked/file desciptor i use a try catch
@@ -142,7 +143,7 @@ void	IRCServer::clientAccept()
     clientPollFd.revents = 0;
 	pollFds.push_back(clientPollFd);
 	//pollFds.push_back({clientFd, POLLIN, 0});
-	clients[clientFd] = new IRCClient(clientFd);
+	clients[clientFd] = new IRCClient(clientFd, this);
 	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
 }
 
@@ -182,11 +183,16 @@ void IRCServer::clientHandle(IRCClient* client)
 	client->addData(buffer);
 	//std::cout << "Received data from client " << client->GetFd() << ": " << buffer << std::endl;
 
-    //clientSendData(client->GetFd(), join_msg);
-	//std::string welcomeMsg = "Welcome to the IRC server!\r\n";
-    //clientSendData(client->GetFd(), welcomeMsg);
-	CommandBuilder commandBuilder(this);
-	commandBuilder.processCommand(client, buffer);
+    std::string commandBuffer = client->GetData();
+    size_t pos;
+    while ((pos = commandBuffer.find("\r\n")) != std::string::npos)
+    {
+        std::string rawCommand = commandBuffer.substr(0, pos);
+        commandBuffer.erase(0, pos + 2);
+        CommandBuilder commandBuilder(this);
+        commandBuilder.processCommand(client, rawCommand);
+    }
+    client->clearData();
 
 	//maybe clearData after
 }
@@ -208,4 +214,22 @@ void	IRCServer::clientSendData(int clientFd, const std::string& data)
 		// TODO: handle errors properly maybe remove client
 		//clientRemove(clientFd);
     }
+}
+
+void	IRCServer::addChannel(const std::string& channelName)
+{
+    if (channels.find(channelName) == channels.end())
+    {
+        channels[channelName] = IRCChannel(channelName);
+    }
+}
+
+IRCChannel* IRCServer::GetChannel(const std::string& channelName)
+{
+    auto it = channels.find(channelName);
+    if (it != channels.end())
+    {
+        return &(it->second);
+    }
+    return nullptr;
 }

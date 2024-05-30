@@ -1,5 +1,6 @@
 #include "IRCChannel.hpp"
 
+IRCChannel::IRCChannel() { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName) { return ; }
 IRCChannel::~IRCChannel() { return ; }
 

@@ -6,7 +6,7 @@
 # include "CommandBuilder.hpp"
 # include "AuthLevel.hpp"
 
-
+class IRCServer;
 
 class IRCClient
 {
@@ -17,9 +17,10 @@ private:
 	std::string nickname;
 	std::string username;
 	std::string buffer;
+	IRCServer*	server;
 public:
 	IRCClient();
-	IRCClient(int clientFd);
+	IRCClient(int clientFd, IRCServer* server);
 	~IRCClient();
 	void			SetFd(int clientFd);
 	int				GetFd() const;
@@ -34,6 +35,7 @@ public:
 	AuthLevel		GetAuthLevel() const;
 	void			SetAuthLevel(AuthLevel level);
 	void			clearData();
+	IRCServer*		GetServer() const;
 
 };
 
