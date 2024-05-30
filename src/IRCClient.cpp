@@ -1,22 +1,27 @@
 #include "IRCClient.hpp"
 
-IRCClient::IRCClient() : fd(-1) {}
-IRCClient::IRCClient(int clientFd) : fd(clientFd) { return ; }
+//IRCClient::IRCClient() : fd(-1) {}
+IRCClient::IRCClient(int clientFd, IRCServer* server) : fd(clientFd), server(server) {	this->authLevel = AuthPublic; return ; }
+
 IRCClient::~IRCClient()
 {
-    printf("client fd closed\n");
-    close(fd);
+	std::cout << "destructor called on client" << std::endl;
+	close(fd);
 }
 
-void			IRCClient::setFd(int clientFd) { this->fd = clientFd; }
-int				IRCClient::getFd() const { return fd; }
-std::string		IRCClient::getData() { return buffer; }
+void			IRCClient::SetFd(int clientFd) { this->fd = clientFd; }
+int				IRCClient::GetFd() const { return fd; }
+std::string		IRCClient::GetData() { return buffer; }
 void			IRCClient::addData(const std::string &data) { buffer += data; }
 void			IRCClient::clearData() { buffer.clear(); }
-std::string&	IRCClient::getNickname() { return nickname; }
-std::string&	IRCClient::getUsername() { return username; }
-void			IRCClient::setNickname(std::string &nickname) { this->nickname = nickname; }
-void			IRCClient::setUsername(std::string &username) { this->username = username; }
-void			IRCClient::setIpAddr(const std::string &ipAddr) { this->ipAddr = ipAddr; }
-std::string		IRCClient::getIpAddr() { return ipAddr; }
+std::string&	IRCClient::GetNickname() { return nickname; }
+std::string&	IRCClient::GetUsername() { return username; }
+void			IRCClient::SetNickname(std::string &nickname) { this->nickname = nickname; }
+void			IRCClient::SetUsername(std::string &username) { this->username = username; }
+void			IRCClient::SetIpAddr(const std::string &ipAddr) { this->ipAddr = ipAddr; }
+std::string		IRCClient::GetIpAddr() { return ipAddr; }
+AuthLevel		IRCClient::GetAuthLevel() const { return authLevel; }
+void			IRCClient::SetAuthLevel(AuthLevel level) { authLevel = level; }
+IRCServer*		IRCClient::GetServer() const { return server; }
+
 

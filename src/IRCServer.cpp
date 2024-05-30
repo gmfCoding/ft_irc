@@ -1,5 +1,6 @@
 #include "IRCServer.hpp"
 
+
 /*
 	run the server setup
 */
@@ -23,6 +24,7 @@ IRCServer::~IRCServer()
 	//	IRCClient& client = it->second;
 	close(serverFd);
 }
+char*	IRCServer::GetPassword() { return(this->_password); }
 
 /*
 	here we create a socked/file desciptor i use a try catch
@@ -117,7 +119,6 @@ ErrorCode IRCServer::Run()
 	return (ERR_NO_ERROR);
 }
 
-
 /*
 	takes in clients and put them in the client map container which we can use later
 	for and it allows fast retrieval of individual elements based on their keys,
@@ -142,7 +143,7 @@ void	IRCServer::clientAccept()
     clientPollFd.revents = 0;
 	pollFds.push_back(clientPollFd);
 	//pollFds.push_back({clientFd, POLLIN, 0});
-	clients[clientFd] = new IRCClient(clientFd);
+	clients[clientFd] = new IRCClient(clientFd, this);
 	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
 }
 
@@ -172,18 +173,63 @@ void IRCServer::clientRemove(int clientFd)
 void IRCServer::clientHandle(IRCClient* client)
 {
 	char buffer[512];
-	int bytesRead = recv(client->getFd(), buffer, sizeof(buffer) - 1, 0);
+	int bytesRead = recv(client->GetFd(), buffer, sizeof(buffer) - 1, 0);
 	if (bytesRead <= 0)
 	{
-		clientRemove(client->getFd());
+		clientRemove(client->GetFd());
 		return;
 	}
 	buffer[bytesRead] = '\0';
 	client->addData(buffer);
-	std::cout << "Received data from client " << client->getFd() << ": " << buffer << std::endl;
+	//std::cout << "Received data from client " << client->GetFd() << ": " << buffer << std::endl;
 
-
-	// add some client magic here ;)
+    std::string commandBuffer = client->GetData();
+    size_t pos;
+    while ((pos = commandBuffer.find("\r\n")) != std::string::npos)
+    {
+        std::string rawCommand = commandBuffer.substr(0, pos);
+        commandBuffer.erase(0, pos + 2);
+        CommandBuilder commandBuilder(this);
+        commandBuilder.processCommand(client, rawCommand);
+    }
+    client->clearData();
 
 	//maybe clearData after
+}
+
+/*
+	the send fucntion  take in the clients socket fd and can only be used it the socket is
+	connected
+	sockets operate at the byte level and can only transmit raw bytes so we may have to converting data to binary format
+	for bonus here
+*/
+void	IRCServer::clientSendData(int clientFd, const std::string& data)
+{
+    std::string formattedData = data + "\r\n"; // IRC messages end with CRLF
+    ssize_t bytesSent = send(clientFd, formattedData.c_str(), formattedData.size(), 0);
+    if (bytesSent == -1)
+	{
+		this->err = ERR_SEND;
+        std::cout << "failed to send data to client" << std::endl;
+		// TODO: handle errors properly maybe remove client
+		//clientRemove(clientFd);
+    }
+}
+
+void	IRCServer::addChannel(const std::string& channelName)
+{
+    if (channels.find(channelName) == channels.end())
+    {
+        channels[channelName] = IRCChannel(channelName);
+    }
+}
+
+IRCChannel* IRCServer::GetChannel(const std::string& channelName)
+{
+    auto it = channels.find(channelName);
+    if (it != channels.end())
+    {
+        return &(it->second);
+    }
+    return nullptr;
 }

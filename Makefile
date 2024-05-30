@@ -1,9 +1,17 @@
 SRCSF = $(TEST) \
 		IRCServer.cpp \
-		IRCClient.cpp
+		IRCClient.cpp \
+		IRCChannel.cpp \
+		CommandBuilder.cpp \
+		Command.cpp 
 
 INCSF = IRCServer.hpp \
-		IRCClient.hpp
+		IRCClient.hpp \
+		IRCChannel.hpp \
+		IRCRespondMacros.hpp \
+		CommandBuilder.hpp \
+		Command.hpp \
+		AuthLevel.hpp 
 
 ifndef $(TEST)
 TEST=main.cpp
