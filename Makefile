@@ -1,11 +1,13 @@
 SRCSF = $(TEST) \
 		IRCServer.cpp \
 		IRCClient.cpp \
+		IRCChannel.cpp \
 		CommandBuilder.cpp \
 		Command.cpp 
 
 INCSF = IRCServer.hpp \
 		IRCClient.hpp \
+		IRCChannel.hpp \
 		CommandBuilder.hpp \
 		Command.hpp \
 		AuthLevel.hpp 
