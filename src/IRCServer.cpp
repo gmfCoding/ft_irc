@@ -14,11 +14,11 @@ IRCServer::IRCServer(int port, char *password) : _port(port), _password(password
 */
 IRCServer::~IRCServer()
 {
-//	for (auto &client : clients)
-//	{
-//		std::cout << "closed fd for " << client.first << std::endl;
-//		close(client.second.getFd());
-//	}
+	for (auto &kvp : clients)
+	{
+		std::cout << "closed fd for " << kvp.first << std::endl;
+		delete kvp.second;
+	}
 	//std::map<int, IRCClient>::iterator it;
 	//for (it = clients.begin(); it != clients.end(); ++it)
 	//	IRCClient& client = it->second;
