@@ -115,11 +115,6 @@ void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::str
     std::cout << "Handling PRIVMSG command" << std::endl;
 }
 
-void Command::handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters)
-{
-    std::cout << "Handling QUIT command" << std::endl;
-}
-
 void Command::handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
     std::cout << "Handling MODE command" << std::endl;
