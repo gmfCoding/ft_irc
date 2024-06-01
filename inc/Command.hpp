@@ -27,7 +27,7 @@ public:
     static void			handlePassCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleJoinCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handlePrivmsgCommand(IRCClient* client, const std::vector<std::string>& parameters);
-	static void			handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters);
+	virtual int	        handleQuitCommand() = 0;
 	static void			handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleTopicCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleInviteCommand(IRCClient* client, const std::vector<std::string>& parameters);

@@ -40,7 +40,6 @@ private:
 	//or we can make stuff some stuff public
 	void		clientAccept();
 	void		clientHandle(IRCClient* client);
-	void		clientRemove(int clientFd);
 
 	int			serverFd;
 	struct sockaddr_in			serverAddr;
@@ -52,6 +51,8 @@ public:
     ~IRCServer();
     ErrorCode	Run();
 	ErrorCode	err;
+	void		erasePollFd(int clientFd);
+	void		clientRemove(int clientFd);
 	void		clientSendData(int clientFd, const std::string& data);
 	void		addChannel(const std::string& channelName);
     IRCChannel*	GetChannel(const std::string& channelName);

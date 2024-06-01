@@ -1,5 +1,5 @@
 #include "IRCServer.hpp"
-
+#include "QuitCommand.hpp"
 
 /*
 	run the server setup
@@ -116,6 +116,7 @@ ErrorCode IRCServer::Run()
 			}
 		}
 	}
+
 	return (ERR_NO_ERROR);
 }
 
@@ -153,7 +154,7 @@ void	IRCServer::clientAccept()
 */
 void IRCServer::clientRemove(int clientFd)
 {
-	close(clientFd);
+	//close(clientFd);
 	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
 	{
         if (it->fd == clientFd) {
@@ -170,6 +171,7 @@ void IRCServer::clientRemove(int clientFd)
 	recv is used to retrieve data from a connection
 	recv(file descriptor of client, a place to store the data, the max sife of the data length, optional flag)
 */
+
 void IRCServer::clientHandle(IRCClient* client)
 {
 	char buffer[512];
@@ -222,6 +224,13 @@ void	IRCServer::addChannel(const std::string& channelName)
     {
         channels[channelName] = IRCChannel(channelName);
     }
+}
+
+void	IRCServer::erasePollFd(int clientFd){
+	auto it = std::remove_if(pollFds.begin(), pollFds.end(), [clientFd](const pollfd& pfd){
+		return pfd.fd == clientFd;
+	});
+	pollFds.erase(it, pollFds.end());
 }
 
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
