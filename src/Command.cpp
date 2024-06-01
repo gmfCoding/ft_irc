@@ -49,69 +49,65 @@ void Command::handlePassCommand(IRCClient* client, const std::vector<std::string
     std::cout << "Password provided: " << password << std::endl;
 }
 
+// TODO: check if the channel name is valid length <= 200)
 void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
-    // Check if the JOIN command has the correct number of parameters
-    if (parameters.size() < 1) {
-        // Send ERR_NEEDMOREPARAMS response to the client
-        client->GetServer()->clientSendData(client->GetFd(),"461 JOIN Not enough parameters");
-        return;
+    if (parameters.empty())
+    {
+        client->GetServer()->clientSendData(client->GetFd(),ERR_NEEDMOREPARAMS(client->GetNickname(),"JOIN"));
+        return ;
     }
-
-    // Extract the channel name from the parameters
     std::string channelName = parameters[0];
-
-    // TODO: check if the channel name is valid length <= 200)
-    // Example validation:
+    std::string key = (parameters.size() > 1) ? parameters[1] : "";
     if (channelName.empty() || (channelName[0] != '&' && channelName[0] != '#'))
     {
         client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));
         return;
     }
-
-    // TODO: check if the channel exists or create a new channel
-    //if (!channelExists(channelName))
-    //{
-    //    createChannel(channelName);
-    //}
-
-    // TODO: check if the client meets the conditions to join the channel
-    // Example:
-    // if (!canJoinChannel(client, channelName)) {
-    //     sendErrorToClient(client, "You cannot join the channel");
-    //     return;
-    // }
-
-    // TODO: add the client to the channel
-    // Example:
-    // addClientToChannel(client, channelName);
-
-    // TODO: broadcast JOIN message to all clients in the channel
-    // Example:
-    // broadcastJoinMessage(client, channelName);
-
-    // TODO: send the channel's topic and member list to the joining client
-    // Example:
-    // sendChannelInfoToClient(client, channelName);
-    //client->sendData("JOIN :" + channelName);
+    IRCChannel* channel = client->GetServer()->GetChannel(channelName);
+    if (!channel)
+    {
+        channel = new IRCChannel(channelName);
+        client->GetServer()->addChannel(channel);
+        channel->addOperator(client);
+    }
+    if (channel->isInviteOnly() && !channel->isInvited(client))
+    {
+        client->GetServer()->clientSendData(client->GetFd(), ERR_INVITEONLYCHAN(client->GetNickname(), channelName));
+        return;
+    }
+    if (channel->isBanned(client))
+    {
+        client->GetServer()->clientSendData(client->GetFd(), ERR_BANNEDFROMCHAN(client->GetNickname(), channelName));
+        return;
+    }
+    if (channel->hasKey() && channel->GetKey() != key)
+    {
+        client->GetServer()->clientSendData(client->GetFd(), ERR_BADCHANNELKEY(client->GetNickname(), channelName));
+        return;
+    }
+    if (channel->isFull())
+    {
+        client->GetServer()->clientSendData(client->GetFd(), ERR_CHANNELISFULL(client->GetNickname(), channelName));
+        return;
+    }
+    channel->addMember(client);
+    channel->broadcast(RPL_JOIN(client->GetNickname(), channelName));
+    if (!channel->GetTopic().empty())
+    {
+        client->GetServer()->clientSendData(client->GetFd(), RPL_TOPIC(client->GetNickname(), channelName, channel->GetTopic()));
+    }
+    client->GetServer()->clientSendData(client->GetFd(), RPL_NAMREPLY(client->GetNickname(), channelName, channel->GetMemberList()));
+    client->GetServer()->clientSendData(client->GetFd(), RPL_ENDOFNAMES(client->GetNickname(), channelName));
 }
 
 void Command::handlePartCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
     if (parameters.empty())
     {
-        // Send error message to client about missing channel name
+        // send error message to client about missing channel name
         return;
     }
-
-    //std::string channelName = parameters[0];
-    //IRCServer* server = client->getServer();
-    //Channel* channel = server->getChannel(channelName);
-    //if (channel)
-    //{
-    //    channel->removeMember(client);
-    //    // send confirmation to client about leaving the channel
-    //}
 }
 
 void Command::handleKickCommand(IRCClient* client, const std::vector<std::string>& parameters)
@@ -119,23 +115,11 @@ void Command::handleKickCommand(IRCClient* client, const std::vector<std::string
     std::cout << "Handling KICK command" << std::endl;
     if (parameters.size() < 2)
     {
-        // Send error message to client about missing parameters
         return;
     }
-
     std::string channelName = parameters[0];
     std::string targetNick = parameters[1];
-    //IRCServer* server = client->getServer();
-    //Channel* channel = server->getChannel(channelName);
-    //if (channel && channel->isOperator(client))
-    //{
-    //    IRCClient* targetClient = server->findClientByNickname(targetNick);
-    //    if (targetClient)
-    //    {
-    //        channel->removeMember(targetClient);
-    //        // send confirmation to client about kicking the target user
-    //    }
-    //}
+
 }
 void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
