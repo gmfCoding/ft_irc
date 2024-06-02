@@ -8,7 +8,7 @@
 
 class IRCClient;
 
-class IRCChannel
+class IRCChannel : public QuitCommand
 {
 private:
 	std::string					name;
@@ -28,7 +28,7 @@ public:
 	void						removeOperator(IRCClient* client);
 	bool						isOperator(IRCClient* client) const;
 	bool						isMember(IRCClient* client) const;
-
+	void                        channelShutDown();
 };
 
 #endif

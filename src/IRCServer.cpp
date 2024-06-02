@@ -7,6 +7,8 @@
 IRCServer::IRCServer(int port, char *password) : _port(port), _password(password)
 {
 	this->err = serverSetup();
+	if (err != 0)
+		IRCServer::serverShutdown();
 }
 
 /*
@@ -22,6 +24,7 @@ IRCServer::~IRCServer()
 	//std::map<int, IRCClient>::iterator it;
 	//for (it = clients.begin(); it != clients.end(); ++it)
 	//	IRCClient& client = it->second;
+	serverShutdown();
 	close(serverFd);
 }
 char*	IRCServer::GetPassword() { return(this->_password); }
@@ -57,18 +60,18 @@ ErrorCode IRCServer::serverSetup()
 		serverFd = socket(AF_INET, SOCK_STREAM, 0);
 		int opt = 1;
 		if (serverFd == -1)
-			throw std::runtime_error("Failed to create socket");
+			throw ServerException("Failed to create socket");
 		if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
-			throw std::runtime_error("setsockopt failed");
+			throw ServerException("setsockopt failed");
 		if(fcntl(serverFd, F_SETFL, O_NONBLOCK) == -1)
-			throw std::runtime_error("fcntl failed");
+			throw ServerException("fcntl failed");
 		serverAddr.sin_family = AF_INET;
 		serverAddr.sin_addr.s_addr = INADDR_ANY;
 		serverAddr.sin_port = htons(_port);
 		if (bind(serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
-			throw std::runtime_error("Bind failed");
+			throw ServerException("Bind failed");
 		if (listen(serverFd, SOMAXCONN) == -1)
-			throw std::runtime_error("Listen failed");
+			throw ServerException("Listen failed");
 		struct pollfd serverPollFd;
     	serverPollFd.fd = serverFd;
     	serverPollFd.events = POLLIN;
@@ -77,7 +80,7 @@ ErrorCode IRCServer::serverSetup()
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cerr << "SERVER SETUP ERR: " << e.what() << "\n Exit Code: " << ERR_SETUP << "\nExiting..." << '\n';
 		return (ERR_SETUP);
 	}
 	return (ERR_NO_ERROR);
@@ -241,4 +244,27 @@ IRCChannel* IRCServer::GetChannel(const std::string& channelName)
         return &(it->second);
     }
     return nullptr;
+}
+
+
+//dont know the order, if clinets leave before channels,
+// but im assuming so
+void IRCServer::serverShutdown(){
+	std::__1::vector<std::__1::string, std::__1::allocator<std::__1::string>> param;
+	if (this->clients.size() > 0){
+		for(auto it = clients.begin(); it != clients.end(); it++){
+			IRCClient* client = it->second;
+			QuitCommand::handleQuitCommand(client, param);
+		}
+	}
+	//channel handling (probably use channelshutdown)
+	if (this->channels.size() > 0){
+		for(auto it = channels.begin(); it != channels.end(); it++){
+			IRCChannel chris_chan = it->second;
+			chris_chan.channelShutDown();
+		}
+	}
+	//any other server vars erased
+	if (_port)
+		close(_port);
 }

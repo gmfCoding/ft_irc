@@ -11,9 +11,11 @@
 # include <arpa/inet.h>
 # include <cstring>
 # include <fcntl.h>
+# include <exception>
 # include "IRCClient.hpp"
 # include "CommandBuilder.hpp"
 # include "IRCChannel.hpp"
+# include "QuitCommand.hpp"
 
 class IRCClient;
 class IRCChannel;
@@ -24,10 +26,11 @@ enum	ErrorCode
 	ERR_SETUP,
 	ERR_POLL,
 	ERR_FCNTL,
-	ERR_SEND
+	ERR_SEND,
+	ERR_NOSUCHCLIENTFD
 };
 
-class IRCServer
+class IRCServer : public QuitCommand
 {
 private:
     // probably make this a int or something 
@@ -57,6 +60,17 @@ public:
 	void		addChannel(const std::string& channelName);
     IRCChannel*	GetChannel(const std::string& channelName);
 	char*		GetPassword();
+	void 		serverShutdown();
+	//exception msgs
+	class ServerException : public std::exception{
+			private:
+				std::string _errMsg;
+			public:
+				ServerException(const std::string &msg) : _errMsg(msg){}
+				virtual const char *what() const throw(){
+					return _errMsg.c_str();
+				};
+		};
 };
 
 #endif
