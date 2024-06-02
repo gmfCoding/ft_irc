@@ -62,7 +62,7 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
     if (channelName.empty() || (channelName[0] != '&' && channelName[0] != '#'))
     {
         client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));
-        return;
+        return ;
     }
     IRCChannel* channel = client->GetServer()->GetChannel(channelName);
     if (!channel)
@@ -74,22 +74,22 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
     if (channel->isInviteOnly() && !channel->isInvited(client))
     {
         client->GetServer()->clientSendData(client->GetFd(), ERR_INVITEONLYCHAN(client->GetNickname(), channelName));
-        return;
+        return ;
     }
     if (channel->isBanned(client))
     {
         client->GetServer()->clientSendData(client->GetFd(), ERR_BANNEDFROMCHAN(client->GetNickname(), channelName));
-        return;
+        return ;
     }
     if (channel->hasKey() && channel->GetKey() != key)
     {
         client->GetServer()->clientSendData(client->GetFd(), ERR_BADCHANNELKEY(client->GetNickname(), channelName));
-        return;
+        return ;
     }
     if (channel->isFull())
     {
         client->GetServer()->clientSendData(client->GetFd(), ERR_CHANNELISFULL(client->GetNickname(), channelName));
-        return;
+        return ;
     }
     channel->addMember(client);
     channel->broadcast(RPL_JOIN(client->GetNickname(), channelName));
@@ -106,7 +106,7 @@ void Command::handlePartCommand(IRCClient* client, const std::vector<std::string
     if (parameters.empty())
     {
         // send error message to client about missing channel name
-        return;
+        return ;
     }
 }
 
@@ -114,16 +114,61 @@ void Command::handleKickCommand(IRCClient* client, const std::vector<std::string
 {
     std::cout << "Handling KICK command" << std::endl;
     if (parameters.size() < 2)
-    {
-        return;
-    }
+        return ;
     std::string channelName = parameters[0];
     std::string targetNick = parameters[1];
 
 }
 void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
-    std::cout << "Handling PRIVMSG command" << std::endl;
+    if (parameters.size() < 2)
+    {
+        client->GetServer()->clientSendData(client->GetFd(), ERR_NORECIPIENT(client->GetNickname(), "PRIVMSG"));
+        return ;
+    }
+    const std::string& receivers = parameters[0];
+    const std::string& message = parameters[1];
+    if (message.empty())
+    {
+        client->GetServer()->clientSendData(client->GetFd(), ERR_NOTEXTTOSEND(client->GetNickname()));
+        return ;
+    }
+    std::vector<std::string> receiverList;
+    std::stringstream ss(receivers);
+    std::string item;
+    while (std::getline(ss, item, ','))
+        receiverList.push_back(item);
+    //for (std::vector<std::string>::const_iterator it = receiverList.begin(); it != receiverList.end(); ++it)
+    for (const auto& receiver : receiverList)
+    {
+        if (receiver[0] == '#')
+        {
+            IRCChannel* channel = client->GetServer()->GetChannel(receiver);
+            if (!channel)
+            {
+                client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), receiver));
+                continue;
+            }
+
+            if (!channel->canSendMessage(client))
+            {
+                client->GetServer()->clientSendData(client->GetFd(), ERR_CANNOTSENDTOCHAN(client->GetNickname(), receiver));
+                continue;
+            }
+            channel->broadcast(RPL_PRIVMSG(client->GetNickname(), receiver, message));
+        }
+        else
+        {
+            IRCClient* targetClient = client->GetServer()->GetClientByNickname(receiver);
+            if (!targetClient)
+            {
+                client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHNICK(client->GetNickname(), receiver));
+                continue;
+            }
+            targetClient->GetServer()->clientSendData(client->GetFd(), RPL_PRIVMSG(client->GetNickname(), receiver, message));
+        }
+    }
+
 }
 
 void Command::handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters)

@@ -57,6 +57,7 @@ public:
 	//void		addChannel(const std::string& channelName);
 	void		addChannel(IRCChannel* channel);
     IRCChannel*	GetChannel(const std::string& channelName);
+	IRCClient*	GetClientByNickname(const std::string& nickname);
 	char*		GetPassword();
 };
 

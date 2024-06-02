@@ -38,6 +38,7 @@ public:
 	std::string					GetMemberList() const;
 	void						broadcast(const std::string& message);
 	bool						isInvited(IRCClient* client) const;
+	bool						canSendMessage(IRCClient* client) const;
 
 };
 

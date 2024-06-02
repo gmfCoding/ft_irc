@@ -20,13 +20,13 @@ void                        IRCChannel::removeMember(IRCClient* client)
 bool IRCChannel::isInviteOnly() const
 {
     //TODO: add invite-only logic
-    return false;
+    return (false);
 }
 
 bool IRCChannel::isBanned(IRCClient* client) const
 {
     //TODO: add ban logic
-    return false;
+    return (false);
 }
 
 bool IRCChannel::hasKey() const
@@ -40,12 +40,18 @@ const std::string& IRCChannel::GetKey() const { return key; }
 bool IRCChannel::isFull() const
 {
     //TODO: add channel full logic
-    return false;
+    return (false);
+}
+
+bool IRCChannel::canSendMessage(IRCClient* client) const
+{
+    // TODO: add checks if the client can send msgs to this channel, for now return true assuming no restricion.
+    return (true);
 }
 
 const std::string& IRCChannel::GetTopic() const
 {
-    return topic;
+    return (topic);
 }
 
 std::string IRCChannel::GetMemberList() const

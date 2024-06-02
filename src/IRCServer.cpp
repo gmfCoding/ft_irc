@@ -229,3 +229,12 @@ IRCChannel* IRCServer::GetChannel(const std::string& channelName)
     }
     return nullptr;
 }
+
+//we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
+IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
+{
+    for (const auto& pair : clients)
+        if (pair.second->GetNickname() == nickname)
+            return (pair.second);
+    return (nullptr);
+}
