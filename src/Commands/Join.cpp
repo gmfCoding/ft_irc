@@ -43,6 +43,7 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
         return ;
     }
     channel->addMember(client);
+    client->SetCurrentChannel(channel);
     channel->broadcast(RPL_JOIN(client->GetNickname(), channelName));
     if (!channel->GetTopic().empty())
     {
