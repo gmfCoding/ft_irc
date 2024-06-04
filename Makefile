@@ -3,7 +3,18 @@ SRCSF = $(TEST) \
 		IRCClient.cpp \
 		IRCChannel.cpp \
 		CommandBuilder.cpp \
-		Command.cpp 
+		Command.cpp \
+		Commands/Invite.cpp \
+		Commands/Join.cpp \
+		Commands/Kick.cpp \
+		Commands/Mode.cpp \
+		Commands/Nick.cpp \
+		Commands/Part.cpp \
+		Commands/Pass.cpp \
+		Commands/Privmsg.cpp \
+		Commands/Quit.cpp \
+		Commands/Topic.cpp \
+		Commands/User.cpp 
 
 INCSF = IRCServer.hpp \
 		IRCClient.hpp \

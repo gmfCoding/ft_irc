@@ -17,6 +17,7 @@ private:
 	std::unordered_set<IRCClient*>	members;
 	std::unordered_set<IRCClient*>	operators;
 	std::unordered_set<IRCClient*>	invited;
+	std::unordered_set<IRCClient*>	bannedClients;
 
 public:
 	IRCChannel();
@@ -31,6 +32,8 @@ public:
 	bool						isMember(IRCClient* client) const;
 	bool						isInviteOnly() const;
 	bool						isBanned(IRCClient* client) const;
+    void						banClient(IRCClient* client);
+    void						unbanClient(IRCClient* client);
 	bool						hasKey() const;
 	const std::string&			GetKey() const;
 	bool						isFull() const;

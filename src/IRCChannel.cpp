@@ -25,22 +25,31 @@ bool IRCChannel::isInviteOnly() const
 
 bool IRCChannel::isBanned(IRCClient* client) const
 {
-    //TODO: add ban logic
-    return (false);
+    return bannedClients.find(client) != bannedClients.end();
+}
+
+void IRCChannel::banClient(IRCClient* client)
+{
+    bannedClients.insert(client);
+}
+
+void IRCChannel::unbanClient(IRCClient* client)
+{
+    bannedClients.erase(client);
 }
 
 bool IRCChannel::hasKey() const
 {
     //TODO: add key logic
-    return !key.empty();
+    return (!key.empty());
 }
 
 const std::string& IRCChannel::GetKey() const { return key; }
 
 bool IRCChannel::isFull() const
 {
-    //TODO: add channel full logic
-    return (false);
+    //TODO: use a marco for the maxsize
+    return (members.size() >= 10);
 }
 
 bool IRCChannel::canSendMessage(IRCClient* client) const
