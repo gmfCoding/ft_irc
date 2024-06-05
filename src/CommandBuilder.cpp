@@ -86,18 +86,12 @@ void CommandBuilder::routeCommand(IRCClient* client, const std::string& command,
     for (const auto& param : parameters)
         std::cout << param << " "; 
     std::cout << std::endl;
-    std::cout << "Irc nickname: " << client->GetNickname() << std::endl;
-    std::cout << "Irc authority level: " << authLevel << std::endl;
-
-
-    for (const auto& cmd : availableCommands)
+    for (std::vector<Command>::const_iterator it = availableCommands.begin(); it != availableCommands.end(); ++it)
     {
-        if (command == cmd.GetName() && authLevel >= cmd.GetAuthLevel())
+        if (command == (*it).GetName() && authLevel >=(*it).GetAuthLevel())
         {
-            cmd.execute(client, parameters);
+            (*it).execute(client, parameters);
             return;
         }
     }
-
 }
-
