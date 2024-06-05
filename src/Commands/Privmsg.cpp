@@ -19,9 +19,9 @@ void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::str
     std::string item;
     while (std::getline(ss, item, ','))
         receiverList.push_back(item);
-    //for (std::vector<std::string>::const_iterator it = receiverList.begin(); it != receiverList.end(); ++it)
-    for (const auto& receiver : receiverList)
+    for (std::vector<std::string>::const_iterator it = receiverList.begin(); it != receiverList.end(); ++it)
     {
+        const std::string& receiver = *it;
         if (receiver[0] == '#')
         {
             IRCChannel* channel = client->GetServer()->GetChannel(receiver);
@@ -49,5 +49,4 @@ void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::str
             targetClient->GetServer()->clientSendData(client->GetFd(), RPL_PRIVMSG(client->GetNickname(), receiver, message));
         }
     }
-
 }
