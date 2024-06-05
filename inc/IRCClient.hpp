@@ -7,6 +7,7 @@
 # include "AuthLevel.hpp"
 
 class IRCServer;
+class IRCChannel;
 
 class IRCClient
 {
