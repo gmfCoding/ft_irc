@@ -7,6 +7,7 @@
 # include "AuthLevel.hpp"
 
 class IRCServer;
+class IRCChannel;
 
 class IRCClient
 {
@@ -18,6 +19,7 @@ private:
 	std::string username;
 	std::string buffer;
 	IRCServer*	server;
+	IRCChannel*	currentChannel;
 public:
 	IRCClient();
 	IRCClient(int clientFd, IRCServer* server);
@@ -36,6 +38,8 @@ public:
 	void			SetAuthLevel(AuthLevel level);
 	void			clearData();
 	IRCServer*		GetServer() const;
+	void			SetCurrentChannel(IRCChannel* channel);
+	IRCChannel*		GetCurrentChannel() const;
 
 };
 

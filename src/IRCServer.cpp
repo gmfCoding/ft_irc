@@ -16,11 +16,11 @@ IRCServer::IRCServer(int port, char *password) : _port(port), _password(password
 */
 IRCServer::~IRCServer()
 {
-//	for (auto &client : clients)
-//	{
-//		std::cout << "closed fd for " << client.first << std::endl;
-//		close(client.second.getFd());
-//	}
+	for (auto &kvp : clients)
+	{
+		std::cout << "closed fd for " << kvp.first << std::endl;
+		delete kvp.second;
+	}
 	//std::map<int, IRCClient>::iterator it;
 	//for (it = clients.begin(); it != clients.end(); ++it)
 	//	IRCClient& client = it->second;
@@ -221,12 +221,9 @@ void	IRCServer::clientSendData(int clientFd, const std::string& data)
     }
 }
 
-void	IRCServer::addChannel(const std::string& channelName)
+void IRCServer::addChannel(IRCChannel* channel)
 {
-    if (channels.find(channelName) == channels.end())
-    {
-        channels[channelName] = IRCChannel(channelName);
-    }
+    channels[channel->GetName()] = channel;
 }
 
 void	IRCServer::erasePollFd(int clientFd){
@@ -239,9 +236,8 @@ void	IRCServer::erasePollFd(int clientFd){
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
 {
     auto it = channels.find(channelName);
-    if (it != channels.end())
-    {
-        return &(it->second);
+    if (it != channels.end()) {
+        return it->second;
     }
     return nullptr;
 }
@@ -267,4 +263,11 @@ void IRCServer::serverShutdown(){
 	//any other server vars erased
 	if (_port)
 		close(_port);
+//we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
+IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
+{
+    for (const auto& pair : clients)
+        if (pair.second->GetNickname() == nickname)
+            return (pair.second);
+    return (nullptr);
 }

@@ -11,8 +11,6 @@ enum AuthLevel
     /// @brief For connected bots, slightly more privlidge than users.
     AuthBot,
     /// @brief For connected mods, privlidge to do channel managament.
-    AuthMod,
-    /// @brief For connect admins, privlidge to shutdown / restart server.
     AuthAdmin
 };
 
