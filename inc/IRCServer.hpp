@@ -30,7 +30,8 @@ enum	ErrorCode
 	ERR_NOSUCHCLIENTFD
 };
 
-class IRCServer : public QuitCommand
+//class IRCServer : public QuitCommand
+class IRCServer
 {
 private:
     // probably make this a int or something 

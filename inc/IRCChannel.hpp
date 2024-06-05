@@ -5,10 +5,12 @@
 # include <set>
 # include <unordered_set>
 # include "IRCClient.hpp"
+# include "QuitCommand.hpp"
 
 class IRCClient;
 
-class IRCChannel : public QuitCommand
+//class IRCChannel : public QuitCommand
+class IRCChannel
 {
 private:
 	std::string						name;

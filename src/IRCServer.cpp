@@ -7,8 +7,8 @@
 IRCServer::IRCServer(int port, char *password) : _port(port), _password(password)
 {
 	this->err = serverSetup();
-	if (err != 0)
-		serverShutdown();
+	//if (err != 0)
+		//serverShutdown();
 }
 
 /*
@@ -24,7 +24,7 @@ IRCServer::~IRCServer()
 	//std::map<int, IRCClient>::iterator it;
 	//for (it = clients.begin(); it != clients.end(); ++it)
 	//	IRCClient& client = it->second;
-	serverShutdown();
+	//serverShutdown();
 	close(serverFd);
 }
 char*	IRCServer::GetPassword() { return(this->_password); }
@@ -242,10 +242,19 @@ IRCChannel* IRCServer::GetChannel(const std::string& channelName)
     return nullptr;
 }
 
+IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
+{
+    for (const auto& pair : clients)
+        if (pair.second->GetNickname() == nickname)
+            return (pair.second);
+    return (nullptr);
+}
 
 //dont know the order, if clinets leave before channels,
 // but im assuming so
-void IRCServer::serverShutdown(){
+/*
+void IRCServer::serverShutdown()
+{
 	std::__1::vector<std::__1::string, std::__1::allocator<std::__1::string>> param;
 	if (this->clients.size() > 0){
 		for(auto it = clients.begin(); it != clients.end(); it++){
@@ -264,10 +273,5 @@ void IRCServer::serverShutdown(){
 	if (_port)
 		close(_port);
 //we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
-IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
-{
-    for (const auto& pair : clients)
-        if (pair.second->GetNickname() == nickname)
-            return (pair.second);
-    return (nullptr);
 }
+*/

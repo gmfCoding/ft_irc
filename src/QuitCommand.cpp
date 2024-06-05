@@ -1,10 +1,11 @@
 #include "QuitCommand.hpp"
 
-QuitCommand::QuitCommand(){return;}
+//QuitCommand::QuitCommand(){return;}
 
 
 //quits client from server at their will, can reuse for servershutdown
 // and program exits
+/*
 int QuitCommand::handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
     IRCServer *server = client->GetServer();
@@ -28,3 +29,4 @@ int QuitCommand::handleQuitCommand(IRCClient* client, const std::vector<std::str
         return ERR_NOSUCHCLIENTFD;
     return ERR_NO_ERROR;
 }
+*/

@@ -91,6 +91,7 @@ void IRCChannel::inviteClient(IRCClient* client)
     invited.insert(client);
 }
 
+/*
 void                        IRCChannel::channelShutDown(){
         std::__1::vector<std::__1::string, std::__1::allocator<std::__1::string>> param;
 			if (members.size() > 0){
@@ -106,3 +107,4 @@ void                        IRCChannel::channelShutDown(){
 				}
 			}
 }
+*/
