@@ -27,6 +27,9 @@ enum	ErrorCode
 	ERR_SEND
 };
 
+typedef std::map<std::string, IRCChannel*>::iterator ChannelIterator;
+typedef std::map<int, IRCClient*>::iterator ClientIterator;
+
 class IRCServer
 {
 private:
