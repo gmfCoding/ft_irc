@@ -17,6 +17,7 @@ private:
     AuthLevel minAuthLevel;          // Minimum required authority level
     std::function<void(IRCClient*, const std::vector<std::string>&)> function;
 public:
+    Command();
     Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func);
     ~Command();
     const std::string&  GetName() const;

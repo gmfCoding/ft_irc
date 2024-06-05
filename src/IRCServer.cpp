@@ -8,7 +8,7 @@ IRCServer::IRCServer(int port, char *password) : _port(port), _password(password
 {
 	this->err = serverSetup();
 	if (err != 0)
-		IRCServer::serverShutdown();
+		serverShutdown();
 }
 
 /*
@@ -80,7 +80,7 @@ ErrorCode IRCServer::serverSetup()
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "SERVER SETUP ERR: " << e.what() << "\n Exit Code: " << ERR_SETUP << "\nExiting..." << '\n';
+		std::cerr << "SERVER SETUP ERR: " << e.what() << "\n Exit Code: " << ERR_SETUP << "\nExiting..." << std::endl;
 		return (ERR_SETUP);
 	}
 	return (ERR_NO_ERROR);
