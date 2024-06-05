@@ -86,3 +86,8 @@ bool IRCChannel::isInvited(IRCClient* client) const
 {
     return invited.find(client) != invited.end();
 }
+
+void IRCChannel::inviteClient(IRCClient* client)
+{
+    invited.insert(client);
+}
