@@ -46,15 +46,18 @@ private:
 	struct sockaddr_in			serverAddr;
 	std::vector<struct pollfd>	pollFds;
 	std::map<int, IRCClient*>	clients;
-	std::map<std::string, IRCChannel> channels;
+	std::map<std::string, IRCChannel*> channels;
+
 public:
     IRCServer(int port, char *password);
     ~IRCServer();
     ErrorCode	Run();
 	ErrorCode	err;
 	void		clientSendData(int clientFd, const std::string& data);
-	void		addChannel(const std::string& channelName);
+	//void		addChannel(const std::string& channelName);
+	void		addChannel(IRCChannel* channel);
     IRCChannel*	GetChannel(const std::string& channelName);
+	IRCClient*	GetClientByNickname(const std::string& nickname);
 	char*		GetPassword();
 };
 

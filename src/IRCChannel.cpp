@@ -5,9 +5,8 @@ IRCChannel::IRCChannel(const std::string& channelName) : name(channelName) { ret
 IRCChannel::~IRCChannel() { return ; }
 
 const std::string&          IRCChannel::GetName() const { return name; }
-const std::set<IRCClient*>& IRCChannel::GetMembers() const { return members; }
-const std::set<IRCClient*>& IRCChannel::GetOperators() const { return operators; }
 void                        IRCChannel::addMember(IRCClient* client) { members.insert(client); }
+void                        IRCChannel::addOperator(IRCClient* client) { operators.insert(client); }
 void                        IRCChannel::removeOperator(IRCClient* client) { operators.erase(client); }
 bool                        IRCChannel::isOperator(IRCClient* client) const { return operators.find(client) != operators.end(); }
 bool                        IRCChannel::isMember(IRCClient* client) const { return members.find(client) != members.end(); }
@@ -18,10 +17,77 @@ void                        IRCChannel::removeMember(IRCClient* client)
     operators.erase(client);
 }
 
-void                        IRCChannel::addOperator(IRCClient* client)
+bool IRCChannel::isInviteOnly() const
 {
-    if (members.find(client) != members.end())
+    //TODO: add invite-only logic
+    return (false);
+}
+
+bool IRCChannel::isBanned(IRCClient* client) const
+{
+    return bannedClients.find(client) != bannedClients.end();
+}
+
+void IRCChannel::banClient(IRCClient* client)
+{
+    bannedClients.insert(client);
+}
+
+void IRCChannel::unbanClient(IRCClient* client)
+{
+    bannedClients.erase(client);
+}
+
+bool IRCChannel::hasKey() const
+{
+    //TODO: add key logic
+    return (!key.empty());
+}
+
+const std::string& IRCChannel::GetKey() const { return key; }
+
+bool IRCChannel::isFull() const
+{
+    //TODO: use a marco for the maxsize
+    return (members.size() >= 10);
+}
+
+bool IRCChannel::canSendMessage(IRCClient* client) const
+{
+    // TODO: add checks if the client can send msgs to this channel, for now return true assuming no restricion.
+    return (true);
+}
+
+const std::string& IRCChannel::GetTopic() const
+{
+    return (topic);
+}
+
+std::string IRCChannel::GetMemberList() const
+{
+    std::string memberList;
+    for (const auto& member : members)
     {
-        operators.insert(client);
+        memberList += member->GetNickname() + " ";
     }
+    return memberList;
+}
+
+
+void IRCChannel::broadcast(const std::string& message)
+{
+    for (const auto& member : members)
+    {
+        member->GetServer()->clientSendData(member->GetFd(),message);
+    }
+}
+
+bool IRCChannel::isInvited(IRCClient* client) const
+{
+    return invited.find(client) != invited.end();
+}
+
+void IRCChannel::inviteClient(IRCClient* client)
+{
+    invited.insert(client);
 }

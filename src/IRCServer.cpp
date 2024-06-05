@@ -216,20 +216,25 @@ void	IRCServer::clientSendData(int clientFd, const std::string& data)
     }
 }
 
-void	IRCServer::addChannel(const std::string& channelName)
+void IRCServer::addChannel(IRCChannel* channel)
 {
-    if (channels.find(channelName) == channels.end())
-    {
-        channels[channelName] = IRCChannel(channelName);
-    }
+    channels[channel->GetName()] = channel;
 }
 
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
 {
     auto it = channels.find(channelName);
-    if (it != channels.end())
-    {
-        return &(it->second);
+    if (it != channels.end()) {
+        return it->second;
     }
     return nullptr;
+}
+
+//we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
+IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
+{
+    for (const auto& pair : clients)
+        if (pair.second->GetNickname() == nickname)
+            return (pair.second);
+    return (nullptr);
 }
