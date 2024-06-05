@@ -8,7 +8,7 @@
 
 class IRCClient;
 
-
+typedef std::unordered_set<IRCClient*>::const_iterator MemberIterator;
 
 class IRCChannel
 {
