@@ -4,6 +4,7 @@ IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(fals
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::~IRCChannel() { return ; }
 
+int							IRCChannel::GetUserLimit() { return (userLimit); }
 const std::string&          IRCChannel::GetName() const { return (name); }
 const std::string&			IRCChannel::GetTopic() const { return (topic); }
 const std::string&			IRCChannel::GetKey() const { return (key); }
