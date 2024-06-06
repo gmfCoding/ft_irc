@@ -45,7 +45,12 @@ std::string IRCChannel::GetMemberList() const
 {
     std::string memberList;
     for (MemberIterator it = members.begin(); it != members.end(); ++it)
-        memberList += (*it)->GetNickname() + " ";
+	{
+		if (isOperator(*it))
+			memberList += "@" + (*it)->GetNickname() + " ";
+		else
+			memberList += (*it)->GetNickname() + " ";
+	}
     return (memberList);
 }
 
