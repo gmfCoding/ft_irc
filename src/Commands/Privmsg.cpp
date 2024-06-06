@@ -30,13 +30,12 @@ void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::str
                 client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), receiver));
                 continue;
             }
-
             if (!channel->canSendMessage(client))
             {
                 client->GetServer()->clientSendData(client->GetFd(), ERR_CANNOTSENDTOCHAN(client->GetNickname(), receiver));
                 continue;
             }
-            channel->broadcast(RPL_PRIVMSG(client->GetNickname(), receiver, message));
+            channel->broadcast(RPL_PRIVMSG(client->GetNickname(), receiver, message), client->GetFd());
         }
         else
         {

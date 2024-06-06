@@ -29,6 +29,7 @@ public:
 	IRCChannel(const std::string& channelName);
 	~IRCChannel();
 	void						broadcast(const std::string& message);
+	void						broadcast(const std::string& message, int fd);
 	int							GetUserLimit();
 	const std::string&			GetName() const;
 	const std::string&			GetKey() const;

@@ -34,6 +34,13 @@ void IRCChannel::broadcast(const std::string& message)
 		(*it)->GetServer()->clientSendData((*it)->GetFd(), message);
 }
 
+void IRCChannel::broadcast(const std::string& message, int fd)
+{
+	for (MemberIterator it = members.begin(); it != members.end(); ++it)
+        if ((*it)->GetFd() != fd)
+		    (*it)->GetServer()->clientSendData((*it)->GetFd(), message);
+}
+
 std::string IRCChannel::GetMemberList() const
 {
     std::string memberList;
