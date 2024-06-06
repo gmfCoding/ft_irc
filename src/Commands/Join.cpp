@@ -39,6 +39,7 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
     }
     if (channel->GetUserLimit() != 0 && channel->isFull())
     {
+        std::cout << "WEHAVE USER LIMIT" << std::endl;
         client->GetServer()->clientSendData(client->GetFd(), ERR_CHANNELISFULL(client->GetNickname(), channelName));
         return ;
     }
