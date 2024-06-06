@@ -2,7 +2,7 @@
 
 IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
-IRCChannel::~IRCChannel() { return ; }
+IRCChannel::~IRCChannel() { delete this; return ; }
 
 int							IRCChannel::GetUserLimit() { return (userLimit); }
 const std::string&          IRCChannel::GetName() const { return (name); }
@@ -37,8 +37,8 @@ void IRCChannel::broadcast(const std::string& message)
 void IRCChannel::broadcast(const std::string& message, int fd)
 {
 	for (MemberIterator it = members.begin(); it != members.end(); ++it)
-        if ((*it)->GetFd() != fd)
-		    (*it)->GetServer()->clientSendData((*it)->GetFd(), message);
+		if ((*it)->GetFd() != fd)
+			(*it)->GetServer()->clientSendData((*it)->GetFd(), message);
 }
 
 std::string IRCChannel::GetMemberList() const
