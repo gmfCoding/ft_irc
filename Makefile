@@ -55,7 +55,7 @@ CXX = c++
 
 WFLAGS =  #-Wall -Werror -Wextra
 CPPFLAGS = -I$(DIRINC) $(LIB-I) -MMD -MP
-CXXFLAGS = $(OPFLAG) $(DFLAGS) $(XCFLAGS) $(WFLAGS)
+CXXFLAGS = -std=c++98 $(OPFLAG) $(DFLAGS) $(XCFLAGS) $(WFLAGS)
 LDFLAGS = $(OPFLAG) $(DFLAGS) $(XLDFLAGS)
 #OPFLAG = -O3 -flto -march=native -mtune=native -msse4.2 
 

@@ -98,6 +98,4 @@ void CommandBuilder::routeCommand(IRCClient* client, const std::string& command,
             return;
         }
     }
-
 }
-

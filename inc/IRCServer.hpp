@@ -65,16 +65,17 @@ public:
 	IRCClient*	GetClientByNickname(const std::string& nickname);
 	char*		GetPassword();
 	void 		serverShutdown();
-	//exception msgs
-	class ServerException : public std::exception{
-			private:
-				std::string _errMsg;
-			public:
-				ServerException(const std::string &msg) : _errMsg(msg){}
-				virtual const char *what() const throw(){
-					return _errMsg.c_str();
-				};
-		};
+};
+
+class ServerException : public std::exception {
+    private:
+    const char *m_message;
+
+    public:
+    ServerException(const char* message) : m_message(message) {}
+    virtual const char* what() const throw() {
+        return m_message;
+    }
 };
 
 #endif

@@ -227,10 +227,10 @@ void IRCServer::addChannel(IRCChannel* channel)
 }
 
 void	IRCServer::erasePollFd(int clientFd){
-	auto it = std::remove_if(pollFds.begin(), pollFds.end(), [clientFd](const pollfd& pfd){
-		return pfd.fd == clientFd;
-	});
-	pollFds.erase(it, pollFds.end());
+	// auto it = std::remove_if(pollFds.begin(), pollFds.end(), [clientFd](const pollfd& pfd){
+	// 	return pfd.fd == clientFd;
+	// });
+	// pollFds.erase(it, pollFds.end());
 }
 
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
@@ -252,26 +252,35 @@ IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 
 //dont know the order, if clinets leave before channels,
 // but im assuming so
-/*
 void IRCServer::serverShutdown()
 {
-	std::__1::vector<std::__1::string, std::__1::allocator<std::__1::string>> param;
-	if (this->clients.size() > 0){
-		for(auto it = clients.begin(); it != clients.end(); it++){
-			IRCClient* client = it->second;
-			QuitCommand::handleQuitCommand(client, param);
-		}
-	}
-	//channel handling (probably use channelshutdown)
-	if (this->channels.size() > 0){
-		for(auto it = channels.begin(); it != channels.end(); it++){
-			IRCChannel chris_chan = it->second;
-			chris_chan.channelShutDown();
-		}
-	}
+	// std::__1::vector<std::__1::string, std::__1::allocator<std::__1::string>> param;
+	// if (this->clients.size() > 0){
+	// 	for(auto it = clients.begin(); it != clients.end(); it++){
+	// 		IRCClient* client = it->second;
+	// 		QuitCommand::handleQuitCommand(client, param);
+	// 	}
+	// }
+	// //channel handling (probably use channelshutdown)
+	// if (this->channels.size() > 0){
+	// 	for(auto it = channels.begin(); it != channels.end(); it++){
+	// 		IRCChannel chris_chan = it->second;
+	// 		chris_chan.channelShutDown();
+	// 	}
+	// }
 	//any other server vars erased
-	if (_port)
-		close(_port);
+	//if (_port)
+		// close(_port);
 //we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
 }
-*/
+
+
+// ServerShutdown:
+// loop over channels and call disconnect:
+// loop over members and operators and disconnect:
+// QuitCommand
+// -----------
+// ClientRemove
+
+
+// QuitCommand -> ClientRemove
