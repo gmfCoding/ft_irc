@@ -22,7 +22,6 @@ IRCServer::~IRCServer()
 		delete kvp.second;
 	}
 	serverShutdown();
-	close(serverFd);
 }
 char*	IRCServer::GetPassword() { return(this->_password); }
 
