@@ -5,11 +5,10 @@
 # include <set>
 # include <unordered_set>
 # include "IRCClient.hpp"
-# include "QuitCommand.hpp"
+# include "Command.hpp"
 
 class IRCClient;
 
-//class IRCChannel : public QuitCommand
 class IRCChannel
 {
 private:

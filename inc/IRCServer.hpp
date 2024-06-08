@@ -15,7 +15,7 @@
 # include "IRCClient.hpp"
 # include "CommandBuilder.hpp"
 # include "IRCChannel.hpp"
-# include "QuitCommand.hpp"
+# include "Command.hpp"
 
 class IRCClient;
 class IRCChannel;
@@ -57,13 +57,13 @@ public:
     ErrorCode	Run();
 	ErrorCode	err;
 	void		erasePollFd(int clientFd);
-	void		clientRemove(int clientFd);
 	void		clientSendData(int clientFd, const std::string& data);
 	//void		addChannel(const std::string& channelName);
 	void		addChannel(IRCChannel* channel);
     IRCChannel*	GetChannel(const std::string& channelName);
 	IRCClient*	GetClientByNickname(const std::string& nickname);
 	char*		GetPassword();
+	void		clientRemove(IRCClient *client);
 	void 		serverShutdown();
 };
 

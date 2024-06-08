@@ -1,5 +1,5 @@
 #include "IRCServer.hpp"
-#include "QuitCommand.hpp"
+#include "Command.hpp"
 
 /*
 	run the server setup
@@ -145,8 +145,7 @@ void	IRCServer::clientAccept()
     clientPollFd.fd = clientFd;
     clientPollFd.events = POLLIN;
     clientPollFd.revents = 0;
-	pollFds.push_back(clientPollFd);
-	//pollFds.push_back({clientFd, POLLIN, 0});
+	pollFds.push_back((struct pollfd){clientFd, POLLIN, 0});
 	clients[clientFd] = new IRCClient(clientFd, this);
 	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
 }
@@ -155,7 +154,7 @@ void	IRCServer::clientAccept()
 	removes client and closed fd's, and removes from the pollfds
 	remove_if Remove elements from range
 */
-void IRCServer::clientRemove(int clientFd)
+void IRCServer::erasePollFd(int clientFd)
 {
 	//close(clientFd);
 	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
@@ -165,10 +164,15 @@ void IRCServer::clientRemove(int clientFd)
             break;
         }
     }
-	delete clients.at(clientFd);
-	clients.erase(clientFd);
 }
 
+void IRCServer::clientRemove(IRCClient *client)
+{
+	erasePollFd(client->GetFd());
+	if (clients.find(client->GetFd()) !=  clients.end())
+		clients.erase(client->GetFd());
+	delete client;
+}
 /*
 	here is here we read the data
 	recv is used to retrieve data from a connection
@@ -181,7 +185,7 @@ void IRCServer::clientHandle(IRCClient* client)
 	int bytesRead = recv(client->GetFd(), buffer, sizeof(buffer) - 1, 0);
 	if (bytesRead <= 0)
 	{
-		clientRemove(client->GetFd());
+		clientRemove(client);
 		return;
 	}
 	buffer[bytesRead] = '\0';
@@ -189,6 +193,7 @@ void IRCServer::clientHandle(IRCClient* client)
 	//std::cout << "Received data from client " << client->GetFd() << ": " << buffer << std::endl;
 
     std::string commandBuffer = client->GetData();
+	client->clearData();
     size_t pos;
     while ((pos = commandBuffer.find("\r\n")) != std::string::npos)
     {
@@ -197,9 +202,6 @@ void IRCServer::clientHandle(IRCClient* client)
         CommandBuilder commandBuilder(this);
         commandBuilder.processCommand(client, rawCommand);
     }
-    client->clearData();
-
-	//maybe clearData after
 }
 
 /*
@@ -226,12 +228,12 @@ void IRCServer::addChannel(IRCChannel* channel)
     channels[channel->GetName()] = channel;
 }
 
-void	IRCServer::erasePollFd(int clientFd){
+//void	IRCServer::erasePollFd(int clientFd){
 	// auto it = std::remove_if(pollFds.begin(), pollFds.end(), [clientFd](const pollfd& pfd){
 	// 	return pfd.fd == clientFd;
 	// });
 	// pollFds.erase(it, pollFds.end());
-}
+//}
 
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
 {

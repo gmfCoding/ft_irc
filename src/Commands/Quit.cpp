@@ -1,6 +1,7 @@
 #include "Command.hpp"
 #include "IRCServer.hpp"
 
+
 void Command::handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
     IRCServer *server = client->GetServer();
@@ -12,20 +13,6 @@ void Command::handleQuitCommand(IRCClient* client, const std::vector<std::string
         const char *msg = first.c_str();
         client->GetServer()->clientSendData(client->GetFd(), RPL_QUIT(client->GetUsername(), msg));
     }
-    //get the right poll to erase from the vector
     //polls, ports, sockets, memory, fds
-    if (client->GetCurrentChannel())
-    {
-        client->GetCurrentChannel()->removeMember(client);
-        client->SetCurrentChannel(nullptr);
-    }
-    if (server){
-        //server->erasePollFd(client->GetFd());
-        server->clientRemove(client->GetFd());
-    }
-//    if (client->GetFd() > -1)
-//        close(client->GetFd());
-//    else 
-//        client->GetServer()->err = ERR_NOSUCHCLIENTFD;
-    client->GetServer()->err = ERR_NO_ERROR;
+	client->GetServer()->clientRemove(client);
 }

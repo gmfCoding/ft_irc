@@ -1,12 +1,26 @@
 #include "IRCClient.hpp"
-
+#include "Command.hpp"
 //IRCClient::IRCClient() : fd(-1) {}
 IRCClient::IRCClient(int clientFd, IRCServer* server) : fd(clientFd), server(server), currentChannel(nullptr) {	this->authLevel = AuthPublic; return ; }
 
 IRCClient::~IRCClient()
 {
+	 IRCServer *const server = this->GetServer();
+	
 	std::cout << "destructor called on client" << std::endl;
-	close(fd);
+    if (this->GetCurrentChannel())
+    {
+        this->GetCurrentChannel()->removeMember(this);
+        this->SetCurrentChannel(nullptr);
+    }
+	if (this->GetFd() > -1)
+		close(this->GetFd());
+	else{
+		server->err = ERR_NOSUCHCLIENTFD;
+		return ;
+	}
+	server->err = ERR_NO_ERROR;
+	clearData();
 }
 
 void			IRCClient::SetFd(int clientFd) { this->fd = clientFd; }
