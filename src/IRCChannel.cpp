@@ -2,7 +2,9 @@
 
 IRCChannel::IRCChannel() { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName) { return ; }
-IRCChannel::~IRCChannel() { return ; }
+IRCChannel::~IRCChannel() {
+	channelShutDown();
+}
 
 const std::string&          IRCChannel::GetName() const { return name; }
 void                        IRCChannel::addMember(IRCClient* client) { members.insert(client); }
@@ -91,20 +93,17 @@ void IRCChannel::inviteClient(IRCClient* client)
     invited.insert(client);
 }
 
-/*
-void                        IRCChannel::channelShutDown(){
-        std::__1::vector<std::__1::string, std::__1::allocator<std::__1::string>> param;
-			if (members.size() > 0){
-				for(auto it = members.begin(); it != members.end(); it++){
-					IRCClient* member = it->second;
-					QuitCommand::handleQuitCommand(member, param);
-				}
-			}
-			if (operators.size() > 0){
-				for(auto it = operators.begin(); it != operators.end(); it++){
-					IRCClient* op = it->second;
-					QuitCommand::handleQuitCommand(op, param);
-				}
-			}
+void IRCChannel::channelShutDown(){
+	if (members.size() > 0){
+		for(auto it = members.begin(); it != members.end(); it++){
+			IRCClient* member = *it;
+			removeMember(member);
+		}
+	}
+	if (operators.size() > 0){
+		for(auto it = operators.begin(); it != operators.end(); it++){
+			IRCClient* op = *it;
+			removeMember(op);
+		}
+	}
 }
-*/

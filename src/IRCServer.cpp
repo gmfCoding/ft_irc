@@ -7,8 +7,8 @@
 IRCServer::IRCServer(int port, char *password) : _port(port), _password(password)
 {
 	this->err = serverSetup();
-	//if (err != 0)
-		//serverShutdown();
+	if (err != 0)
+		serverShutdown();
 }
 
 /*
@@ -21,10 +21,7 @@ IRCServer::~IRCServer()
 		std::cout << "closed fd for " << kvp.first << std::endl;
 		delete kvp.second;
 	}
-	//std::map<int, IRCClient>::iterator it;
-	//for (it = clients.begin(); it != clients.end(); ++it)
-	//	IRCClient& client = it->second;
-	//serverShutdown();
+	serverShutdown();
 	close(serverFd);
 }
 char*	IRCServer::GetPassword() { return(this->_password); }
@@ -252,37 +249,21 @@ IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
     return (nullptr);
 }
 
-//dont know the order, if clinets leave before channels,
-// but im assuming so
 void IRCServer::serverShutdown()
 {
-	// std::__1::vector<std::__1::string, std::__1::allocator<std::__1::string>> param;
-	// if (this->clients.size() > 0){
-	// 	for(auto it = clients.begin(); it != clients.end(); it++){
-	// 		IRCClient* client = it->second;
-	// 		QuitCommand::handleQuitCommand(client, param);
-	// 	}
-	// }
-	// //channel handling (probably use channelshutdown)
-	// if (this->channels.size() > 0){
-	// 	for(auto it = channels.begin(); it != channels.end(); it++){
-	// 		IRCChannel chris_chan = it->second;
-	// 		chris_chan.channelShutDown();
-	// 	}
-	// }
-	//any other server vars erased
-	//if (_port)
-		// close(_port);
+	if (this->clients.size() > 0){
+		for(auto it = clients.begin(); it != clients.end(); it++){
+			IRCClient* client = it->second;
+			clientRemove(client);
+		}
+	}
+	if (this->channels.size() > 0){
+		for(auto it = channels.begin(); it != channels.end(); it++){
+			IRCChannel* chris_chan = it->second;
+			chris_chan->channelShutDown();
+		}
+	}
+	if (serverFd)
+		close(serverFd);
 //we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
 }
-
-
-// ServerShutdown:
-// loop over channels and call disconnect:
-// loop over members and operators and disconnect:
-// QuitCommand
-// -----------
-// ClientRemove
-
-
-// QuitCommand -> ClientRemove
