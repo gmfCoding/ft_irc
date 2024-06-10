@@ -31,14 +31,20 @@ bool						IRCChannel::isInvited(IRCClient* client) const { return (invited.find(
 void IRCChannel::broadcast(const std::string& message)
 {
 	for (MemberIterator it = members.begin(); it != members.end(); ++it)
+	{
+		std::cout << "BROADCASTED_THIS " << (*it)->GetNickname() << " ---sent themself this " << message << std::endl;
 		(*it)->GetServer()->clientSendData((*it)->GetFd(), message);
+	}
 }
 
 void IRCChannel::broadcast(const std::string& message, int fd)
 {
 	for (MemberIterator it = members.begin(); it != members.end(); ++it)
 		if ((*it)->GetFd() != fd)
+		{
+			std::cout << "BROADCASTED_THIS " << (*it)->GetNickname() << " ---sent themself this " << message << std::endl;
 			(*it)->GetServer()->clientSendData((*it)->GetFd(), message);
+		}
 }
 
 std::string IRCChannel::GetMemberList() const
@@ -51,6 +57,8 @@ std::string IRCChannel::GetMemberList() const
 		else
 			memberList += (*it)->GetNickname() + " ";
 	}
+	if (!memberList.empty() && memberList.back() == ' ')
+    	memberList.pop_back();
     return (memberList);
 }
 

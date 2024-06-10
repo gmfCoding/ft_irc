@@ -72,6 +72,7 @@ TypeMap_ModeHandlers modeHandlers = {
 */
 void Command::handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
+    std::cout << "Handling MODE command" << std::endl;
 	if (parameters.size() < 2)
 	{
 		client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "MODE"));

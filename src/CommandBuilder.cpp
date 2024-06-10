@@ -41,21 +41,23 @@ void CommandBuilder::initializeCommands()
 
 std::vector<std::string> CommandBuilder::tokenizeBuffer(const std::string& buffer)
 {
-    std::vector<std::string> tokens;
-    std::stringstream ss(buffer);
-    std::string token;
+	std::vector<std::string> tokens;
+	std::stringstream ss(buffer);
+	std::string token;
 
-    while (ss >> token)
-    {
-        if (token.front() == ':')
-        {
-            std::string rest;
-            std::getline(ss, rest);
-            token += rest;
-            tokens.push_back(token);
-            break;
-        }
-        tokens.push_back(token);
+	while (ss >> token)
+	{
+		if (token.front() == ':')
+		{
+			std::string rest;
+			std::getline(ss, rest);
+//			if (!rest.empty() && rest.front() == ' ')
+//				rest = rest.substr(1);
+			token += rest;
+			tokens.push_back(token);
+			break;
+		}
+		tokens.push_back(token);
     }
     return tokens;
 }
@@ -94,4 +96,5 @@ void CommandBuilder::routeCommand(IRCClient* client, const std::string& command,
             return;
         }
     }
+    client->GetServer()->clientSendData(client->GetFd(), ERR_UNKNOWNCOMMAND(client->GetNickname(), command));
 }

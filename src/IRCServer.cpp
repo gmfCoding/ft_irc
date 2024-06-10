@@ -183,6 +183,7 @@ void IRCServer::clientHandle(IRCClient* client)
     while ((pos = commandBuffer.find("\r\n")) != std::string::npos)
     {
         std::string rawCommand = commandBuffer.substr(0, pos);
+//		std::cout << rawCommand << std::endl;
         commandBuffer.erase(0, pos + 2);
         CommandBuilder commandBuilder(this);
         commandBuilder.processCommand(client, rawCommand);
