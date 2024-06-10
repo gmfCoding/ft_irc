@@ -198,8 +198,8 @@ void IRCServer::clientHandle(IRCClient* client)
 */
 void	IRCServer::clientSendData(int clientFd, const std::string& data)
 {
-    std::string formattedData = data + "\r\n"; // IRC messages end with CRLF
-    ssize_t bytesSent = send(clientFd, formattedData.c_str(), formattedData.size(), 0);
+    //std::string formattedData = data + "\r\n"; // IRC messages end with CRLF//already sending with macros
+    ssize_t bytesSent = send(clientFd, data.c_str(), data.size(), 0);
     if (bytesSent == -1)
 	{
 		this->err = ERR_SEND;
