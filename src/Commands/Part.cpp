@@ -19,12 +19,9 @@ void Command::handlePartCommand(IRCClient* client, const std::vector<std::string
 	    client->GetServer()->clientSendData(client->GetFd(), ERR_NOTONCHANNEL(client->GetNickname(), channelName));
 	    return;
 	}
+	channel->broadcast(RPL_PART(client->GetNickname(), channelName));
 	channel->removeMember(client);
 	client->SetCurrentChannel(nullptr);
-	std::string partMessage = ":" + client->GetNickname() + " PART " + channelName;
-	channel->broadcast(partMessage);
-	client->GetServer()->clientSendData(client->GetFd(), partMessage);
-	
 //	if (channel->GetMemberList().empty())//TODO: make decision if the channel is removed when there are no more members left
 //	{
 //	    client->GetServer()->removeChannel(channelName);//need to add a removeChannel fucntion
