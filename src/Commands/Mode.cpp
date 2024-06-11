@@ -1,5 +1,42 @@
 #include "Command.hpp"
 #include <unordered_map>
+#include <functional>
+#include <vector>
+#include <string>
+#include <iostream>
+
+class IRCClient;
+class IRCChannel;
+
+static void handleInviteOnlyMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters);
+static void handleTopicRestrictionMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters);
+static void handleChannelKeyMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters);
+static void handleOperatorPrivilegeMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters);
+static void handleUserLimitMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters);
+
+typedef std::unordered_map<char, void (*)(IRCChannel*, bool, IRCClient*, const std::vector<std::string>&)> TypeMap_ModeHandlers;
+//typedef std::unordered_map<char, std::function<void(IRCChannel*, bool, IRCClient*, const std::vector<std::string>&)>> TypeMap_ModeHandlers;
+//typedef void (*ModeHandler)(IRCChannel*, bool, IRCClient*, const std::vector<std::string>&);
+//typedef std::unordered_map<char, ModeHandler> TypeMap_ModeHandlers;
+
+//TypeMap_ModeHandlers modeHandlers = {
+//	{'i', handleInviteOnlyMode},
+///	{'t', handleTopicRestrictionMode},
+//	{'k', handleChannelKeyMode},
+//	{'o', handleOperatorPrivilegeMode},
+//	{'l', handleUserLimitMode}
+//};
+
+TypeMap_ModeHandlers modeHandlers;
+
+void populateModeHandlers()
+{
+    modeHandlers.insert(std::make_pair('i', handleInviteOnlyMode));
+    modeHandlers.insert(std::make_pair('t', handleTopicRestrictionMode));
+    modeHandlers.insert(std::make_pair('k', handleChannelKeyMode));
+    modeHandlers.insert(std::make_pair('o', handleOperatorPrivilegeMode));
+    modeHandlers.insert(std::make_pair('l', handleUserLimitMode));
+}
 
 static void handleInviteOnlyMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters)
 {
@@ -56,14 +93,8 @@ static void handleUserLimitMode(IRCChannel* channel, bool set, IRCClient* client
 		channel->removeUserLimit();
 }
 
-typedef std::unordered_map<char, std::function<void(IRCChannel*, bool, IRCClient*, const std::vector<std::string>&)>> TypeMap_ModeHandlers;
-TypeMap_ModeHandlers modeHandlers = {
-	{'i', handleInviteOnlyMode},
-	{'t', handleTopicRestrictionMode},
-	{'k', handleChannelKeyMode},
-	{'o', handleOperatorPrivilegeMode},
-	{'l', handleUserLimitMode}
-};
+
+
 
 /*
 	handling the modes for oparators i,t,k,o,l we look for a + or a - to determin what we are doing to that mode
@@ -73,6 +104,7 @@ TypeMap_ModeHandlers modeHandlers = {
 void Command::handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
     std::cout << "Handling MODE command" << std::endl;
+	populateModeHandlers();//TODO:should setup in constructor
 	if (parameters.size() < 2)
 	{
 		client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "MODE"));
@@ -102,3 +134,5 @@ void Command::handleModeCommand(IRCClient* client, const std::vector<std::string
 		client->GetServer()->clientSendData(client->GetFd(), ERR_UNKNOWNMODE(client->GetNickname(), mode));
 	}
 }
+
+

@@ -25,17 +25,17 @@ void CommandBuilder::processCommand(IRCClient* client, const std::string& buffer
 */
 void CommandBuilder::initializeCommands()
 {
-	availableCommands.push_back(Command("NICK", AuthLevel::AuthPublic, Command::handleNickCommand));
-	availableCommands.push_back(Command("USER", AuthLevel::AuthPublic, Command::handleUserCommand));
-	availableCommands.push_back(Command("PASS", AuthLevel::AuthPublic, Command::handlePassCommand));
-	availableCommands.push_back(Command("JOIN", AuthLevel::AuthUser, Command::handleJoinCommand));
-	availableCommands.push_back(Command("PRIVMSG", AuthLevel::AuthUser, Command::handlePrivmsgCommand));
-	availableCommands.push_back(Command("QUIT", AuthLevel::AuthPublic, Command::handleQuitCommand));
-	availableCommands.push_back(Command("MODE", AuthLevel::AuthUser, Command::handleModeCommand));
-	availableCommands.push_back(Command("TOPIC", AuthLevel::AuthUser, Command::handleTopicCommand));
-	availableCommands.push_back(Command("INVITE", AuthLevel::AuthUser, Command::handleInviteCommand));
-	availableCommands.push_back(Command("KICK", AuthLevel::AuthUser, Command::handleKickCommand));
-	availableCommands.push_back(Command("PART", AuthLevel::AuthUser, Command::handlePartCommand));
+	availableCommands.push_back(Command("NICK", AuthPublic, Command::handleNickCommand));
+	availableCommands.push_back(Command("USER", AuthPublic, Command::handleUserCommand));
+	availableCommands.push_back(Command("PASS", AuthPublic, Command::handlePassCommand));
+	availableCommands.push_back(Command("JOIN", AuthUser, Command::handleJoinCommand));
+	availableCommands.push_back(Command("PRIVMSG", AuthUser, Command::handlePrivmsgCommand));
+	availableCommands.push_back(Command("QUIT", AuthPublic, Command::handleQuitCommand));
+	availableCommands.push_back(Command("MODE", AuthUser, Command::handleModeCommand));
+	availableCommands.push_back(Command("TOPIC", AuthUser, Command::handleTopicCommand));
+	availableCommands.push_back(Command("INVITE", AuthUser, Command::handleInviteCommand));
+	availableCommands.push_back(Command("KICK", AuthUser, Command::handleKickCommand));
+	availableCommands.push_back(Command("PART", AuthUser, Command::handlePartCommand));
 }
 
 
@@ -85,8 +85,10 @@ void CommandBuilder::routeCommand(IRCClient* client, const std::string& command,
 {
     std::cout << "Irc received command: " << command << std::endl;
     std::cout << "Irc parameters: ";
-    for (const auto& param : parameters)
-        std::cout << param << " "; 
+//    for (const auto& param : parameters)
+//        std::cout << param << " ";
+	for (std::vector<std::string>::const_iterator param = parameters.begin(); param != parameters.end(); ++param)
+        std::cout << *param << " "; 
     std::cout << std::endl;
     for (std::vector<Command>::const_iterator it = availableCommands.begin(); it != availableCommands.end(); ++it)
     {

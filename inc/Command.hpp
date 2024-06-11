@@ -9,6 +9,7 @@
 
 //class IRCServer;
 class IRCClient;
+class IRCChannel;
 
 class Command
 {
