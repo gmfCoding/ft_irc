@@ -32,9 +32,7 @@ void Command::handleKickCommand(IRCClient* client, const std::vector<std::string
 	    client->GetServer()->clientSendData(client->GetFd(), ERR_USERNOTINCHANNEL(client->GetNickname(), targetNick, channelName));
 	    return;
 	}
+	channel->broadcast(RPL_KICK(client->GetNickname(), channelName, targetNick, reason));
 	channel->removeMember(targetClient);
-	std::string kickMessage = ":" + client->GetNickname() + " KICK " + channelName + " " + targetNick + " :" + reason;
-	channel->broadcast(kickMessage);
-	client->GetServer()->clientSendData(targetClient->GetFd(), kickMessage);
-	targetClient->GetServer()->clientSendData(targetClient->GetFd(), "You have been kicked from " + channelName + " by " + client->GetNickname() + " (" + reason + ")");
+//	targetClient->GetServer()->clientSendData(targetClient->GetFd(), "You have been kicked from " + channelName + " by " + client->GetNickname() + " (" + reason + ")");
 }

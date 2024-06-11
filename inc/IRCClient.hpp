@@ -40,6 +40,7 @@ public:
 	IRCServer*		GetServer() const;
 	void			SetCurrentChannel(IRCChannel* channel);
 	IRCChannel*		GetCurrentChannel() const;
+	std::string		GetHostname();
 
 };
 

@@ -8,6 +8,8 @@
 
 class IRCClient;
 
+typedef std::unordered_set<IRCClient*>::const_iterator MemberIterator;
+
 class IRCChannel
 {
 private:
@@ -18,32 +20,46 @@ private:
 	std::unordered_set<IRCClient*>	operators;
 	std::unordered_set<IRCClient*>	invited;
 	std::unordered_set<IRCClient*>	bannedClients;
+	bool							inviteOnly;
+	bool							topicRestricted;
+	int								userLimit;
 
 public:
 	IRCChannel();
 	IRCChannel(const std::string& channelName);
 	~IRCChannel();
+	void						broadcast(const std::string& message);
+	void						broadcast(const std::string& message, int fd);
+	int							GetUserLimit();
 	const std::string&			GetName() const;
+	const std::string&			GetKey() const;
+	const std::string&			GetTopic() const;
+	std::string					GetMemberList() const;
+	void						SetUserLimit(int limit);
+	void						SetTopic(const std::string& newTopic);
+	void						SetTopicRestricted(bool set);
+	void						SetInviteOnly(bool set);
+	void						SetKey(const std::string& newKey);
 	void						addMember(IRCClient* client);
-	void						removeMember(IRCClient* client);
 	void						addOperator(IRCClient* client);
+	void						removeUserLimit();
+	void						removeMember(IRCClient* client);
 	void						removeOperator(IRCClient* client);
+	void						removeKey();
+	bool						hasKey() const;
+	void						inviteClient(IRCClient* client);
+	bool						isFull() const;
+	bool						isTopicRestricted() const;
+	bool						isInvited(IRCClient* client) const;
 	bool						isOperator(IRCClient* client) const;
 	bool						isMember(IRCClient* client) const;
 	bool						isInviteOnly() const;
+
+//VVis not mandatoryVV
 	bool						isBanned(IRCClient* client) const;
+	bool						canSendMessage(IRCClient* client) const;
     void						banClient(IRCClient* client);
     void						unbanClient(IRCClient* client);
-	bool						hasKey() const;
-	const std::string&			GetKey() const;
-	bool						isFull() const;
-	const std::string&			GetTopic() const;
-	std::string					GetMemberList() const;
-	void						broadcast(const std::string& message);
-	bool						isInvited(IRCClient* client) const;
-	void						inviteClient(IRCClient* client);
-	bool						canSendMessage(IRCClient* client) const;
-
 };
 
 #endif

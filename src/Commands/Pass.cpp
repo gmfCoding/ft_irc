@@ -17,7 +17,7 @@ void Command::handlePassCommand(IRCClient* client, const std::vector<std::string
     }
     std::cout << "Authentication successful. Password verified." << std::endl;
     //could have different passwords for admin, that auto set you to the highest user
-    client->SetAuthLevel(AuthLevel::AuthAdmin);
+    client->SetAuthLevel(AuthAdmin);//autoset to admin for the moment
     client->GetServer()->clientSendData(client->GetFd(), RPL_WELCOME(client->GetNickname()));
       //maybe send welcome msg
     std::cout << "Password provided: " << password << std::endl;

@@ -1,30 +1,25 @@
 #include "IRCServer.hpp"
 
-
 /*
 	run the server setup
 */
-IRCServer::IRCServer(int port, char *password) : _port(port), _password(password)
-{
-	this->err = serverSetup();
-}
+IRCServer::IRCServer(int port, char *password) : _port(port), _password(password) {	this->err = serverSetup(); }
+
+char*		IRCServer::GetPassword() { return(this->_password); }
+void		IRCServer::addChannel(IRCChannel* channel) { channels[channel->GetName()] = channel; }
 
 /*
 	on destruction loop through and close remaining cleint fd's
 */
 IRCServer::~IRCServer()
 {
-	for (auto &kvp : clients)
+	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
 	{
-		std::cout << "closed fd for " << kvp.first << std::endl;
-		delete kvp.second;
+		std::cout << "closed fd for " << kvp->first << std::endl;
+		delete kvp->second;
 	}
-	//std::map<int, IRCClient>::iterator it;
-	//for (it = clients.begin(); it != clients.end(); ++it)
-	//	IRCClient& client = it->second;
 	close(serverFd);
 }
-char*	IRCServer::GetPassword() { return(this->_password); }
 
 /*
 	here we create a socked/file desciptor i use a try catch
@@ -156,11 +151,12 @@ void IRCServer::clientRemove(int clientFd)
 	close(clientFd);
 	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
 	{
-        if (it->fd == clientFd) {
-            pollFds.erase(it);
-            break;
-        }
-    }
+		if (it->fd == clientFd)
+		{
+			pollFds.erase(it);
+			break ;
+		}
+	}
 	delete clients.at(clientFd);
 	clients.erase(clientFd);
 }
@@ -177,24 +173,22 @@ void IRCServer::clientHandle(IRCClient* client)
 	if (bytesRead <= 0)
 	{
 		clientRemove(client->GetFd());
-		return;
+		return ;
 	}
 	buffer[bytesRead] = '\0';
 	client->addData(buffer);
-	//std::cout << "Received data from client " << client->GetFd() << ": " << buffer << std::endl;
 
     std::string commandBuffer = client->GetData();
     size_t pos;
     while ((pos = commandBuffer.find("\r\n")) != std::string::npos)
     {
         std::string rawCommand = commandBuffer.substr(0, pos);
+//		std::cout << rawCommand << std::endl;
         commandBuffer.erase(0, pos + 2);
         CommandBuilder commandBuilder(this);
         commandBuilder.processCommand(client, rawCommand);
     }
     client->clearData();
-
-	//maybe clearData after
 }
 
 /*
@@ -205,8 +199,8 @@ void IRCServer::clientHandle(IRCClient* client)
 */
 void	IRCServer::clientSendData(int clientFd, const std::string& data)
 {
-    std::string formattedData = data + "\r\n"; // IRC messages end with CRLF
-    ssize_t bytesSent = send(clientFd, formattedData.c_str(), formattedData.size(), 0);
+    //std::string formattedData = data + "\r\n"; // IRC messages end with CRLF//already sending with macros
+    ssize_t bytesSent = send(clientFd, data.c_str(), data.size(), 0);
     if (bytesSent == -1)
 	{
 		this->err = ERR_SEND;
@@ -216,25 +210,18 @@ void	IRCServer::clientSendData(int clientFd, const std::string& data)
     }
 }
 
-void IRCServer::addChannel(IRCChannel* channel)
-{
-    channels[channel->GetName()] = channel;
-}
-
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
 {
-    auto it = channels.find(channelName);
-    if (it != channels.end()) {
-        return it->second;
-    }
-    return nullptr;
+	ChannelIterator kvp = channels.find(channelName);
+	if (kvp != channels.end())
+		return (kvp->second);
+	return (nullptr);
 }
 
-//we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
 IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 {
-    for (const auto& pair : clients)
-        if (pair.second->GetNickname() == nickname)
-            return (pair.second);
-    return (nullptr);
+	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
+		if (kvp->second->GetNickname() == nickname)
+			return (kvp->second);
+	return (nullptr);
 }

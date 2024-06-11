@@ -26,4 +26,11 @@ IRCServer*		IRCClient::GetServer() const { return server; }
 void			IRCClient::SetCurrentChannel(IRCChannel* channel) { currentChannel = channel; }
 IRCChannel*		IRCClient::GetCurrentChannel() const { return currentChannel; }
 
+std::string		IRCClient::GetHostname()
+{
+	std::string id;
+	id = this->GetNickname() + "!" + this->GetUsername();
+	return (id);
+}
+
 
