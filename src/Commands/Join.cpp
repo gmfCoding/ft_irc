@@ -52,23 +52,4 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 		client->GetServer()->clientSendData(client->GetFd(), RPL_NOTOPIC(client->GetNickname(), channelName));
 	client->GetServer()->clientSendData(client->GetFd(), RPL_NAMREPLY(client->GetNickname(), channelName, channel->GetMemberList()));
 	client->GetServer()->clientSendData(client->GetFd(), RPL_ENDOFNAMES(client->GetNickname(), channelName));
-
-//	std::string sendFullMsg;
-//	if (!channel->GetTopic().empty())
-//	{
-//		sendFullMsg += RPL_JOIN(client->GetHostname(), channelName);
-//		sendFullMsg += RPL_TOPIC(client->GetNickname(), channelName, channel->GetTopic());
-//		sendFullMsg += RPL_NAMREPLY(client->GetNickname(), channelName, channel->GetMemberList());
-//		sendFullMsg += RPL_ENDOFNAMES(client->GetNickname(), channelName);
-//		client->GetServer()->clientSendData(client->GetFd(), sendFullMsg);
-//	}
-//	else
-//	{
-//		sendFullMsg += RPL_JOIN(client->GetHostname(), channelName);
-//		//sendFullMsg += RPL_NOTOPIC(client->GetNickname(), channelName);
-//		sendFullMsg += RPL_NAMREPLY(client->GetNickname(), channelName, channel->GetMemberList());
-//		sendFullMsg += RPL_ENDOFNAMES(client->GetNickname(), channelName);
-//		client->GetServer()->clientSendData(client->GetFd(), sendFullMsg);
-//	}
-//	channel->broadcast(RPL_JOIN(client->GetHostname(), channelName), client->GetFd());
 }

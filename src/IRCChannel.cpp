@@ -15,7 +15,7 @@ void                        IRCChannel::SetUserLimit(int limit) { userLimit = li
 void						IRCChannel::SetTopic(const std::string& newTopic) { topic = newTopic; }
 void                        IRCChannel::addMember(IRCClient* client) { members.insert(client); }
 void                        IRCChannel::addOperator(IRCClient* client) { operators.insert(client); }
-void                        IRCChannel::removeMember(IRCClient* client) { members.erase(client); operators.erase(client); }
+void                        IRCChannel::removeMember(IRCClient* client) { members.erase(client); operators.erase(client); client->SetCurrentChannel(nullptr); }
 void                        IRCChannel::removeOperator(IRCClient* client) { operators.erase(client); }
 void						IRCChannel::removeUserLimit() { userLimit = 0; }
 void                        IRCChannel::removeKey() { key.clear(); }
