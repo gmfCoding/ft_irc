@@ -131,13 +131,15 @@
 #define RPL_TRYAGAIN(source, command)                   ": 263 " + source + " " + command + " :Please wait a while and try again." + "\r\n"
 
 //command Responses
-#define RPL_JOIN(source, channel)                       ":" + source + " JOIN :" + channel + "\r\n"
-#define RPL_PART(source, channel)                       ":" + source + " PART :" + channel + "\r\n"
-#define RPL_PING(source, token)                         ":" + source + " PONG :" + token + "\r\n"
-#define RPL_PRIVMSG(source, target, message)            ":" + source + " PRIVMSG " + target + " :" + message + "\r\n"
-#define RPL_NOTICE(source, target, message)             ":" + source + " NOTICE " + target + " :" + message + "\r\n"
-#define RPL_QUIT(source, message)                       ":" + source + " QUIT :Quit: " + message + "\r\n"
-#define RPL_KICK(source, channel, target, reason)       ":" + source + " KICK " + channel + " " + target + " :" + reason + "\r\n"
-#define RPL_MODE(source, channel, modes, args)          ":" + source + " MODE " + channel + " " + modes + " " + args + "\r\n"
+#define RPL_MODE_ADD_OPERATOR(source, channel, target)		":" + source + " MODE " + channel + " +o " + target + "\r\n"
+#define RPL_MODE_REMOVE_OPERATOR(source, channel, target)	":" + source + " MODE " + channel + " -o " + target + "\r\n"
+#define RPL_JOIN(source, channel)							":" + source + " JOIN :" + channel + "\r\n"
+#define RPL_PART(source, channel)							":" + source + " PART :" + channel + "\r\n"
+#define RPL_PING(source, token)								":" + source + " PONG :" + token + "\r\n"
+#define RPL_PRIVMSG(source, target, message)				":" + source + " PRIVMSG " + target + " :" + message + "\r\n"
+#define RPL_NOTICE(source, target, message)					":" + source + " NOTICE " + target + " :" + message + "\r\n"
+#define RPL_QUIT(source, message)							":" + source + " QUIT :Quit: " + message + "\r\n"
+#define RPL_KICK(source, channel, target, reason)			":" + source + " KICK " + channel + " " + target + " :" + reason + "\r\n"
+#define RPL_MODE(source, channel, modes, args)				":" + source + " MODE " + channel + " " + modes + " " + args + "\r\n"
 
 #endif

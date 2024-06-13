@@ -3,7 +3,10 @@
 CommandBuilder::CommandBuilder(IRCServer* server) : server(server)
 {
 	if (availableCommands.empty())
+	{
 		initializeCommands();
+		Command::commandMode = CommandMode();
+	}
 	return ;
 }
 CommandBuilder::~CommandBuilder() { return ; }

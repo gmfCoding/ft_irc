@@ -5,19 +5,23 @@
 # include "IRCRespondMacros.hpp"
 # include "AuthLevel.hpp"
 # include "IRCClient.hpp"
+# include "CommandMode.hpp"
 
 
 //class IRCServer;
 class IRCClient;
 class IRCChannel;
+class CommandMode;
+
 
 class Command
 {
 private:
-    std::string name;                // Command name
-    AuthLevel minAuthLevel;          // Minimum required authority level
+    std::string     name;                // Command name
+    AuthLevel       minAuthLevel;          // Minimum required authority level
     std::function<void(IRCClient*, const std::vector<std::string>&)> function;
 public:
+    static CommandMode commandMode;
     Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func);
     ~Command();
     const std::string&  GetName() const;
@@ -29,7 +33,7 @@ public:
 	static void			handleJoinCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handlePrivmsgCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters);
-	static void			handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters);
+	static void    		handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleTopicCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleInviteCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleKickCommand(IRCClient* client, const std::vector<std::string>& parameters);
@@ -37,9 +41,5 @@ public:
 
 };
 
-
-
-
-// add other command classes here...
 
 #endif
