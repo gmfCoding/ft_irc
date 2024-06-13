@@ -33,7 +33,7 @@ void Command::handleTopicCommand(IRCClient* client, const std::vector<std::strin
 	}
 	else
 	{
-		if (!channel->isOperator(client))
+		if (channel->isTopicRestricted() && !channel->isOperator(client))
 		{
 			client->GetServer()->clientSendData(client->GetFd(), ERR_CHANOPRIVSNEEDED(client->GetNickname(), channelName));
 			return;
