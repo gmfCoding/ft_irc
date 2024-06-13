@@ -34,6 +34,7 @@ public:
 	void			SetUsername(std::string &username);
 	void			addData(const std::string &data);
 	std::string 	GetData();
+	void			SetData(const std::string& data);
 	AuthLevel		GetAuthLevel() const;
 	void			SetAuthLevel(AuthLevel level);
 	void			clearData();

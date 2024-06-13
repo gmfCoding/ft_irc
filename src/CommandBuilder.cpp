@@ -8,16 +8,39 @@ CommandBuilder::CommandBuilder(IRCServer* server) : server(server)
 }
 CommandBuilder::~CommandBuilder() { return ; }
 
-void CommandBuilder::processCommand(IRCClient* client, const std::string& buffer)
+void	CommandBuilder::processCommand(IRCClient* client, const std::string& buffer)
 {
-    std::vector<std::string> tokens = tokenizeBuffer(buffer);
-    if (tokens.empty())
-        return;
+	std::vector<std::string> tokens = tokenizeBuffer(buffer);
+	if (tokens.empty())
+		return ;
+	std::string command = extractCommand(tokens);
+	std::vector<std::string> parameters = extractParameters(tokens);
+	//if (command == "PRIVMSG")// add more if other commands they dont need leading colon/ or remove this and change it in the macro
+	handleMultiWordParameters(parameters);
+	AuthLevel authLevel = client->GetAuthLevel();
+	routeCommand(client, command, parameters, authLevel);
+}
 
-    std::string command = extractCommand(tokens);
-    std::vector<std::string> parameters = extractParameters(tokens);
-    AuthLevel authLevel = client->GetAuthLevel();
-    routeCommand(client, command, parameters, authLevel);
+/*
+	combine paramteres back into 1 parameters from the leadking colon:
+*/
+void	CommandBuilder::handleMultiWordParameters(std::vector<std::string>& parameters)
+{
+	if (!parameters.empty() && parameters[parameters.size() - 1][0] == ':')
+	{ // remove leading colon
+		std::string combinedMessage = parameters[parameters.size() - 1].substr(1);
+		for (size_t i = parameters.size(); i > 0; --i)
+		{
+			if (parameters[i - 1][0] == ':')
+			{
+				for (size_t j = i; j < parameters.size(); ++j)
+					combinedMessage += " " + parameters[j];
+				parameters.resize(i);
+				parameters[i - 1] = combinedMessage;
+				break ;
+			}
+		}
+	}
 }
 
 /*
@@ -59,7 +82,7 @@ std::vector<std::string> CommandBuilder::tokenizeBuffer(const std::string& buffe
 		}
 		tokens.push_back(token);
     }
-    return tokens;
+    return (tokens);
 }
 
 /*
@@ -83,10 +106,6 @@ std::vector<std::string> CommandBuilder::extractParameters(const std::vector<std
 */
 void CommandBuilder::routeCommand(IRCClient* client, const std::string& command, const std::vector<std::string>& parameters, AuthLevel authLevel)
 {
-    std::cout << "Irc received command: " << command << std::endl;
-    std::cout << "Irc parameters: ";
-//    for (const auto& param : parameters)
-//        std::cout << param << " ";
 	for (std::vector<std::string>::const_iterator param = parameters.begin(); param != parameters.end(); ++param)
         std::cout << *param << " "; 
     std::cout << std::endl;

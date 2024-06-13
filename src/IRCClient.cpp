@@ -14,6 +14,7 @@ int				IRCClient::GetFd() const { return fd; }
 std::string		IRCClient::GetData() { return buffer; }
 void			IRCClient::addData(const std::string &data) { buffer += data; }
 void			IRCClient::clearData() { buffer.clear(); }
+void			IRCClient::SetData(const std::string& data) { buffer = data; }
 std::string&	IRCClient::GetNickname() { return nickname; }
 std::string&	IRCClient::GetUsername() { return username; }
 void			IRCClient::SetNickname(std::string &nickname) { this->nickname = nickname; }
