@@ -45,7 +45,7 @@ void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::str
                 client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHNICK(client->GetNickname(), receiver));
                 continue;
             }
-            targetClient->GetServer()->clientSendData(client->GetFd(), RPL_PRIVMSG(client->GetNickname(), receiver, message));
+            client->GetServer()->clientSendData(targetClient->GetFd(), RPL_PRIVMSG(client->GetHostname(), receiver, message));
         }
     }
 }
