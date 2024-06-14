@@ -9,6 +9,9 @@
 # include <poll.h>
 # include <unistd.h>
 # include <arpa/inet.h>
+# include <sstream>
+# include <limits.h>
+# include <string>
 # include <cstring>
 # include <fcntl.h>
 # include <exception>
@@ -17,6 +20,7 @@
 # include "IRCChannel.hpp"
 # include "Command.hpp"
 
+# define HOST_NAME_MAX 255
 class IRCClient;
 class IRCChannel;
 
@@ -62,7 +66,10 @@ public:
 	void		addChannel(IRCChannel* channel);
     IRCChannel*	GetChannel(const std::string& channelName);
 	IRCClient*	GetClientByNickname(const std::string& nickname);
+	std::string retriveHostName();
+	std::map<int, IRCClient*> GetClients();
 	char*		GetPassword();
+	std::string GetPortName();
 	void		clientRemove(IRCClient *client);
 	void 		serverShutdown();
 };

@@ -1,7 +1,7 @@
 #include "IRCClient.hpp"
 #include "Command.hpp"
 //IRCClient::IRCClient() : fd(-1) {}
-IRCClient::IRCClient(int clientFd, IRCServer* server) : fd(clientFd), server(server), currentChannel(nullptr) {	this->authLevel = AuthPublic; return ; }
+IRCClient::IRCClient(int clientFd, IRCServer* server, const std::string& host) : fd(clientFd), server(server), currentChannel(nullptr), hostname(host){	this->authLevel = AuthPublic; return ; }
 
 IRCClient::~IRCClient()
 {
@@ -39,5 +39,4 @@ void			IRCClient::SetAuthLevel(AuthLevel level) { authLevel = level; }
 IRCServer*		IRCClient::GetServer() const { return server; }
 void			IRCClient::SetCurrentChannel(IRCChannel* channel) { currentChannel = channel; }
 IRCChannel*		IRCClient::GetCurrentChannel() const { return currentChannel; }
-
-
+std::string		IRCClient::GetHostName() { return this->hostname; }

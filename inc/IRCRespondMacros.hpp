@@ -136,7 +136,7 @@
 #define RPL_PING(source, token)                         ":" + source + " PONG :" + token + "\r\n"
 #define RPL_PRIVMSG(source, target, message)            ":" + source + " PRIVMSG " + target + " :" + message + "\r\n"
 #define RPL_NOTICE(source, target, message)             ":" + source + " NOTICE " + target + " :" + message + "\r\n"
-#define RPL_QUIT(source, message)                       ":" + source + " QUIT :Quit: " + message + "\r\n"
+#define RPL_QUIT(source, message)                       ":" + source + " QUIT :" + message + "\r\n"
 #define RPL_KICK(source, channel, target, reason)       ":" + source + " KICK " + channel + " " + target + " :" + reason + "\r\n"
 #define RPL_MODE(source, channel, modes, args)          ":" + source + " MODE " + channel + " " + modes + " " + args + "\r\n"
 

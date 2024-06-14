@@ -23,6 +23,11 @@ IRCServer::~IRCServer()
 	}
 	serverShutdown();
 }
+
+std::map<int, IRCClient*> IRCServer::GetClients(){ return (this->clients); }
+
+std::string IRCServer::GetPortName(){ return std::to_string(this->_port); }
+
 char*	IRCServer::GetPassword() { return(this->_password); }
 
 /*
@@ -127,6 +132,15 @@ ErrorCode IRCServer::Run()
 	we add the fd to the pollfds so we can check it for data in our loop
 
 */
+
+std::string IRCServer::retriveHostName(){
+	char host[HOST_NAME_MAX];
+	if (gethostname(host, sizeof(host)) == 0)
+		return std::string(host);
+	else
+		return "Unknown";
+}
+
 void	IRCServer::clientAccept()
 {
 	int clientFd = accept(serverFd, nullptr, nullptr);
@@ -141,8 +155,10 @@ void	IRCServer::clientAccept()
     clientPollFd.fd = clientFd;
     clientPollFd.events = POLLIN;
     clientPollFd.revents = 0;
+	std::string host = retriveHostName();
+	std::cout << "ASDASDASD  " << host << std::endl;
 	pollFds.push_back((struct pollfd){clientFd, POLLIN, 0});
-	clients[clientFd] = new IRCClient(clientFd, this);
+	clients[clientFd] = new IRCClient(clientFd, this, host);
 	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
 }
 
@@ -264,5 +280,5 @@ void IRCServer::serverShutdown()
 	}
 	if (serverFd)
 		close(serverFd);
-//we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
 }
+//we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients

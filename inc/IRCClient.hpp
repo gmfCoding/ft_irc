@@ -18,16 +18,18 @@ private:
 	std::string nickname;
 	std::string username;
 	std::string buffer;
+	std::string hostname;
 	IRCServer*	server;
 	IRCChannel*	currentChannel;
 public:
 	IRCClient();
-	IRCClient(int clientFd, IRCServer* server);
+	IRCClient(int clientFd, IRCServer* server, const std::string& host);
 	~IRCClient();
 	void			SetFd(int clientFd);
 	int				GetFd() const;
 	std::string&	GetNickname();
 	std::string&	GetUsername();
+	std::string	GetHostName();
 	std::string		GetIpAddr();
     void			SetIpAddr(const std::string &ipAddr);
 	void			SetNickname(std::string &nickname);
