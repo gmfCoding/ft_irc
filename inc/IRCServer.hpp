@@ -57,7 +57,7 @@ public:
     ErrorCode	Run();
 	ErrorCode	err;
 	void		clientSendData(int clientFd, const std::string& data);
-	//void		addChannel(const std::string& channelName);
+	void		removeChannel(const std::string& channelName);
 	void		addChannel(IRCChannel* channel);
     IRCChannel*	GetChannel(const std::string& channelName);
 	IRCClient*	GetClientByNickname(const std::string& nickname);

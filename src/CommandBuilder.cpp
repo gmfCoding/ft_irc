@@ -18,8 +18,8 @@ void	CommandBuilder::processCommand(IRCClient* client, const std::string& buffer
 		return ;
 	std::string command = extractCommand(tokens);
 	std::vector<std::string> parameters = extractParameters(tokens);
-	//if (command == "PRIVMSG")// add more if other commands they dont need leading colon/ or remove this and change it in the macro
-	handleMultiWordParameters(parameters);
+	if (command == "PRIVMSG")// add more if other commands they dont need leading colon/ or remove this and change it in the macro
+		handleMultiWordParameters(parameters);
 	AuthLevel authLevel = client->GetAuthLevel();
 	routeCommand(client, command, parameters, authLevel);
 }

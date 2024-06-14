@@ -234,3 +234,13 @@ IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 			return (kvp->second);
 	return (nullptr);
 }
+
+void IRCServer::removeChannel(const std::string& channelName)
+{
+	ChannelIterator kvp = channels.find(channelName);
+	if (kvp != channels.end())
+	{
+		delete kvp->second;
+		channels.erase(kvp);
+	}
+}

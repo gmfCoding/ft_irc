@@ -24,9 +24,11 @@ public:
     static CommandMode commandMode;
     Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func);
     ~Command();
+    static std::vector<std::string>    splitChannels(const std::string& channelList);
     const std::string&  GetName() const;
     AuthLevel           GetAuthLevel() const;
     void                execute(IRCClient* client, const std::vector<std::string>& params) const;
+
     static void         handleNickCommand(IRCClient* client, const std::vector<std::string>& parameters);
     static void         handleUserCommand(IRCClient* client, const std::vector<std::string>& parameters);
     static void			handlePassCommand(IRCClient* client, const std::vector<std::string>& parameters);
@@ -38,7 +40,6 @@ public:
 	static void			handleInviteCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleKickCommand(IRCClient* client, const std::vector<std::string>& parameters);
     static void			handlePartCommand(IRCClient* client, const std::vector<std::string>& parameters);
-
 };
 
 

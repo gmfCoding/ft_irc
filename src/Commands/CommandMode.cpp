@@ -139,10 +139,18 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 			if (kvp != modeHandlers.end())
 			{
 				std::vector<std::string> modeParameters;
-				if (parameterIndex < parameters.size())
+				if (mode == 'k' || mode == 'l' || mode == 'o')//if we add more operator modes that take parameters add them here too
 				{
-					modeParameters.push_back(parameters[parameterIndex]);
-                    parameterIndex++;
+					if (parameterIndex < parameters.size())
+					{
+					    modeParameters.push_back(parameters[parameterIndex]);
+					    parameterIndex++;
+					}
+					else
+					{
+						client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "MODE"));
+						return ;
+					}
 				}
 				kvp->second(channel, set, client, modeParameters);
 			}
@@ -151,5 +159,3 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 		}
 	}
 }
-
-
