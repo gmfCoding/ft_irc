@@ -235,6 +235,14 @@ IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 	return (nullptr);
 }
 
+bool	IRCServer::isNicknameInUse(const std::string& nickname)
+{
+	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
+		if (kvp->second->GetNickname() == nickname)
+			return (true);
+	return (false);
+}
+
 void IRCServer::removeChannel(const std::string& channelName)
 {
 	ChannelIterator kvp = channels.find(channelName);

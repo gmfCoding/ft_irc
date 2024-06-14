@@ -62,6 +62,7 @@ public:
     IRCChannel*	GetChannel(const std::string& channelName);
 	IRCClient*	GetClientByNickname(const std::string& nickname);
 	char*		GetPassword();
+	bool		isNicknameInUse(const std::string& nickname);
 };
 
 #endif
