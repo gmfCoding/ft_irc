@@ -13,9 +13,9 @@ void                        IRCChannel::SetTopicRestricted(bool set) { topicRest
 void                        IRCChannel::SetKey(const std::string& newKey) { key = newKey; }
 void                        IRCChannel::SetUserLimit(int limit) { userLimit = limit; }
 void						IRCChannel::SetTopic(const std::string& newTopic) { topic = newTopic; }
-void                        IRCChannel::addMember(IRCClient* client) { members.insert(client); }
+void                        IRCChannel::addMember(IRCClient* client) { members.insert(client); client->addChannel(this); }
 void                        IRCChannel::addOperator(IRCClient* client) { operators.insert(client); }
-void                        IRCChannel::removeMember(IRCClient* client) { members.erase(client); operators.erase(client); client->SetCurrentChannel(nullptr); }
+void                        IRCChannel::removeMember(IRCClient* client) { members.erase(client); operators.erase(client); client->removeChannel(this); }
 void                        IRCChannel::removeOperator(IRCClient* client) { operators.erase(client); }
 void						IRCChannel::removeUserLimit() { userLimit = 0; }
 void                        IRCChannel::removeKey() { key.clear(); }
@@ -31,20 +31,14 @@ bool						IRCChannel::isInvited(IRCClient* client) const { return (invited.find(
 void IRCChannel::broadcast(const std::string& message)
 {
 	for (MemberIterator it = members.begin(); it != members.end(); ++it)
-	{
-		std::cout << "BROADCASTED_THIS " << (*it)->GetNickname() << " ---sent themself this " << message << std::endl;
 		(*it)->GetServer()->clientSendData((*it)->GetFd(), message);
-	}
 }
 
 void IRCChannel::broadcast(const std::string& message, int fd)
 {
 	for (MemberIterator it = members.begin(); it != members.end(); ++it)
 		if ((*it)->GetFd() != fd)
-		{
-			std::cout << "BROADCASTED_THIS " << (*it)->GetNickname() << " ---sent themself this " << message << std::endl;
 			(*it)->GetServer()->clientSendData((*it)->GetFd(), message);
-		}
 }
 
 std::string IRCChannel::GetMemberList() const
