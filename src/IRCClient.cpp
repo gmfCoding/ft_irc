@@ -1,7 +1,7 @@
 #include "IRCClient.hpp"
 
 //IRCClient::IRCClient() : fd(-1) {}
-IRCClient::IRCClient(int clientFd, IRCServer* server) : fd(clientFd), server(server), currentChannel(nullptr) {	this->authLevel = AuthPublic; return ; }
+IRCClient::IRCClient(int clientFd, IRCServer* server) : fd(clientFd), server(server), channelsIn() {	this->authLevel = AuthPublic; return ; }
 
 IRCClient::~IRCClient()
 {
@@ -24,8 +24,10 @@ std::string		IRCClient::GetIpAddr() { return ipAddr; }
 AuthLevel		IRCClient::GetAuthLevel() const { return authLevel; }
 void			IRCClient::SetAuthLevel(AuthLevel level) { authLevel = level; }
 IRCServer*		IRCClient::GetServer() const { return server; }
-void			IRCClient::SetCurrentChannel(IRCChannel* channel) { currentChannel = channel; }
-IRCChannel*		IRCClient::GetCurrentChannel() const { return currentChannel; }
+bool			IRCClient::isInChannel(IRCChannel* channel) const { return (channelsIn.find(channel) != channelsIn.end()); }
+void			IRCClient::removeChannel(IRCChannel* channel) { channelsIn.erase(channel); }
+void			IRCClient::addChannel(IRCChannel* channel) { channelsIn.insert(channel); }
+std::unordered_set<IRCChannel*>	IRCClient::GetChannels() const { return channelsIn; }
 
 std::string		IRCClient::GetHostname()
 {
@@ -34,4 +36,5 @@ std::string		IRCClient::GetHostname()
 	return (id);
 }
 
-
+//void			IRCClient::SetCurrentChannel(IRCChannel* channel) { currentChannel = channel; }
+//IRCChannel*		IRCClient::GetCurrentChannel() const { return currentChannel; }
