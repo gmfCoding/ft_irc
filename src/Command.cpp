@@ -9,15 +9,14 @@ AuthLevel					Command::GetAuthLevel() const { return minAuthLevel; }
 void						Command::execute(IRCClient* client, const std::vector<std::string>& params) const { function(client, params); }
 void						Command::handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters) { commandMode.handleModeCommand(client, parameters); }
 
-std::vector<std::string>	Command::splitChannels(const std::string& channelList)
+std::vector<std::string> Command::splitString(const std::string& str, char delimiter)
 {
-    std::vector<std::string> channels;
-    std::stringstream ss(channelList);
-    std::string channel;
-    while (std::getline(ss, channel, ','))
-	{
-        if (!channel.empty())
-            channels.push_back(channel);
-    }
-    return (channels);
+    std::vector<std::string> tokens;
+    std::stringstream ss(str);
+    std::string token;
+    while (std::getline(ss, token, delimiter))
+        tokens.push_back(token);
+    if (str.back() == delimiter)
+        tokens.push_back("");// capture empty bit
+    return (tokens);
 }

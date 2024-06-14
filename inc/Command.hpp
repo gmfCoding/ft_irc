@@ -24,7 +24,7 @@ public:
     static CommandMode commandMode;
     Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func);
     ~Command();
-    static std::vector<std::string>    splitChannels(const std::string& channelList);
+    static std::vector<std::string>     splitString(const std::string& str, char delimiter);
     const std::string&  GetName() const;
     AuthLevel           GetAuthLevel() const;
     void                execute(IRCClient* client, const std::vector<std::string>& params) const;

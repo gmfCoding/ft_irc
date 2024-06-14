@@ -2,23 +2,7 @@
 
 
 
-std::vector<std::string> splitString(const std::string& str, char delimiter)
-{
-    std::vector<std::string> tokens;
-    std::stringstream ss(str);
-    std::string token;
 
-    while (std::getline(ss, token, delimiter))
-    {
-        tokens.push_back(token);
-    }
-    
-    // Ensure trailing empty segments are captured
-    if (str.back() == delimiter)
-        tokens.push_back("");
-    
-    return tokens;
-}
 
 
 // TODO: check if the channel name is valid length <= 200)
@@ -29,7 +13,7 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 		client->GetServer()->clientSendData(client->GetFd(),ERR_NEEDMOREPARAMS(client->GetNickname(),"JOIN"));
 		return ;
 	}
-	std::vector<std::string> channels = splitChannels(parameters[0]);
+	std::vector<std::string> channels = splitString(parameters[0], ',');
     std::vector<std::string> keys;
     if (parameters.size() > 1)
         keys = splitString(parameters[1], ',');
@@ -79,7 +63,6 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 			return ;
 		}
 		channel->addMember(client);
-		client->SetCurrentChannel(channel);
 		channel->broadcast(RPL_JOIN(client->GetHostname(), channelName));
 		if (!channel->GetTopic().empty())
 			client->GetServer()->clientSendData(client->GetFd(), RPL_TOPIC(client->GetNickname(), channelName, channel->GetTopic()));
