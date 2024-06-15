@@ -176,7 +176,8 @@ void IRCServer::clientHandle(IRCClient* client)
 	}
 	buffer[bytesRead] = '\0';
 	client->addData(buffer);
-	std::cout << "buffer = " << buffer << std::endl;
+	std::cout << "\033[1;32m" << "Client FD: " << "\033[0m" << client->GetFd() << ".." << std::endl;
+	std::cout << buffer << std::endl;
 	std::string commandBuffer = client->GetData();
 	size_t pos;
 	while ((pos = commandBuffer.find_first_of("\r\n")) != std::string::npos)
