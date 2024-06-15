@@ -33,36 +33,29 @@ typedef std::map<int, IRCClient*>::iterator ClientIterator;
 class IRCServer
 {
 private:
-    // probably make this a int or something 
-	//i made it int TODO:remove these comments
-	int			_port;
-	char		*_password;
-	ErrorCode	serverSetup();
-	//vvvvthesevvvv function even tho they are client based they reference a lot of server classes
-	//and to handle errors correctly when it comes connections thought it was best to keep them here
-	//or we can make stuff some stuff public
-	void		clientAccept();
-	void		clientHandle(IRCClient* client);
-	void		clientRemove(int clientFd);
-
-	int			serverFd;
-	struct sockaddr_in			serverAddr;
-	std::vector<struct pollfd>	pollFds;
-	std::map<int, IRCClient*>	clients;
-	std::map<std::string, IRCChannel*> channels;
-
+	int									_port;
+	char								*_password;
+	ErrorCode							serverSetup();
+	void								clientAccept();
+	void								clientHandle(IRCClient* client);
+	void								clientRemove(int clientFd);
+	int									serverFd;
+	struct sockaddr_in					serverAddr;
+	std::vector<struct pollfd>			pollFds;
+	std::map<int, IRCClient*>			clients;
+	std::map<std::string, IRCChannel*>	channels;
 public:
-    IRCServer(int port, char *password);
-    ~IRCServer();
-    ErrorCode	Run();
-	ErrorCode	err;
-	void		clientSendData(int clientFd, const std::string& data);
-	void		removeChannel(const std::string& channelName);
-	void		addChannel(IRCChannel* channel);
-    IRCChannel*	GetChannel(const std::string& channelName);
-	IRCClient*	GetClientByNickname(const std::string& nickname);
-	char*		GetPassword();
-	bool		isNicknameInUse(const std::string& nickname);
+	IRCServer(int port, char *password);
+	~IRCServer();
+	ErrorCode							Run();
+	ErrorCode							err;
+	void								clientSendData(int clientFd, const std::string& data);
+	void								removeChannel(const std::string& channelName);
+	void								addChannel(IRCChannel* channel);
+	IRCChannel*							GetChannel(const std::string& channelName);
+	IRCClient*							GetClientByNickname(const std::string& nickname);
+	char*								GetPassword();
+	bool								isNicknameInUse(const std::string& nickname);
 };
 
 #endif

@@ -9,7 +9,11 @@ IRCClient::IRCClient(int clientFd, IRCServer* server) : fd(clientFd), server(ser
 
 IRCClient::~IRCClient()
 {
-	std::cout << "destructor called on client" << std::endl;
+	for (IRCChannel* channel : channelsIn)
+	{
+		channel->removeMember(this);
+	}
+	std::cout << "\033[1;33m" << "destructor called on client" << "\033[0m" << std::endl;
 	close(fd);
 }
 

@@ -138,7 +138,7 @@ void	IRCServer::clientAccept()
     clientPollFd.revents = 0;
 	pollFds.push_back(clientPollFd);
 	clients[clientFd] = new IRCClient(clientFd, this);
-	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
+	std::cout << "\033[1;32m" << "accepted client connection, FD: " << "\033[0m" << clientFd << std::endl;
 }
 
 /*
@@ -147,7 +147,7 @@ void	IRCServer::clientAccept()
 */
 void IRCServer::clientRemove(int clientFd)
 {
-	close(clientFd);
+	//close(clientFd);
 	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
 	{
 		if (it->fd == clientFd)
@@ -176,7 +176,7 @@ void IRCServer::clientHandle(IRCClient* client)
 	}
 	buffer[bytesRead] = '\0';
 	client->addData(buffer);
-	std::cout << "buffere = " << buffer << std::endl;
+	std::cout << "buffer = " << buffer << std::endl;
 	std::string commandBuffer = client->GetData();
 	size_t pos;
 	while ((pos = commandBuffer.find_first_of("\r\n")) != std::string::npos)
@@ -208,15 +208,15 @@ void IRCServer::clientHandle(IRCClient* client)
 */
 void	IRCServer::clientSendData(int clientFd, const std::string& data)
 {
-    //std::string formattedData = data + "\r\n"; // IRC messages end with CRLF//already sending with macros
-    ssize_t bytesSent = send(clientFd, data.c_str(), data.size(), 0);
-    if (bytesSent == -1)
+	//std::string formattedData = data + "\r\n"; // IRC messages end with CRLF//already sending with macros
+	ssize_t bytesSent = send(clientFd, data.c_str(), data.size(), 0);
+	if (bytesSent == -1)
 	{
 		this->err = ERR_SEND;
-        std::cout << "failed to send data to client" << std::endl;
+		std::cout << "failed to send data to client" << std::endl;
 		// TODO: handle errors properly maybe remove client
 		//clientRemove(clientFd);
-    }
+	}
 }
 
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
@@ -247,8 +247,5 @@ void IRCServer::removeChannel(const std::string& channelName)
 {
 	ChannelIterator kvp = channels.find(channelName);
 	if (kvp != channels.end())
-	{
-		delete kvp->second;
 		channels.erase(kvp);
-	}
 }

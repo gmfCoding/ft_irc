@@ -2,17 +2,16 @@
 
 void Command::handlePassCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
-    std::cout << "Handling PASS command" << std::endl;
-    if (parameters.empty())
-    {
-        client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "Password"));
-        return;
-    }
-    std::string password = parameters[0];
-    if (password != client->GetServer()->GetPassword())
-    {
-        client->GetServer()->clientSendData(client->GetFd(), ERR_PASSWDMISMATCH(client->GetNickname()));
-        return;
-    }
-    client->SetAuthStatus(PASS, true);
+	if (parameters.empty())
+	{
+		client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "Password"));
+		return ;
+	}
+	std::string password = parameters[0];
+	if (password != client->GetServer()->GetPassword())
+	{
+		client->GetServer()->clientSendData(client->GetFd(), ERR_PASSWDMISMATCH(client->GetNickname()));
+		return ;
+	}
+	client->SetAuthStatus(PASS, true);
 }

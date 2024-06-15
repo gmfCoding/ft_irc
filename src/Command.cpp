@@ -1,7 +1,7 @@
 #include "Command.hpp"
 
 Command::Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func)
-        : name(name), minAuthLevel(level), function(func) {}
+				: name(name), minAuthLevel(level), function(func) {}
 Command::~Command() { return ; }
 
 const std::string&			Command::GetName() const { return name; }
@@ -11,12 +11,12 @@ void						Command::handleModeCommand(IRCClient* client, const std::vector<std::s
 
 std::vector<std::string> Command::splitString(const std::string& str, char delimiter)
 {
-    std::vector<std::string> tokens;
-    std::stringstream ss(str);
-    std::string token;
-    while (std::getline(ss, token, delimiter))
-        tokens.push_back(token);
-    if (str.back() == delimiter)
-        tokens.push_back("");// capture empty bit
-    return (tokens);
+	std::vector<std::string> tokens;
+	std::stringstream ss(str);
+	std::string token;
+	while (std::getline(ss, token, delimiter))
+		tokens.push_back(token);
+	if (str.back() == delimiter)
+		tokens.push_back("");// capture empty bit
+	return (tokens);
 }

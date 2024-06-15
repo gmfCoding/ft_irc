@@ -12,35 +12,31 @@ void Command::handleInviteCommand(IRCClient* client, const std::vector<std::stri
 	IRCChannel* currentChannel = client->GetServer()->GetChannel(channelName);
 	if (!currentChannel)
 	{
-	    client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));
-	    return;
+		client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));
+		return;
 	}
 	if (!currentChannel->isMember(client))
 	{
-	    client->GetServer()->clientSendData(client->GetFd(), ERR_NOTONCHANNEL(client->GetNickname(), channelName));
-	    return;
+		client->GetServer()->clientSendData(client->GetFd(), ERR_NOTONCHANNEL(client->GetNickname(), channelName));
+		return;
 	}
 	if (!currentChannel->isOperator(client))
 	{
-	    client->GetServer()->clientSendData(client->GetFd(), ERR_CHANOPRIVSNEEDED(client->GetNickname(), channelName));
-	    return;
+		client->GetServer()->clientSendData(client->GetFd(), ERR_CHANOPRIVSNEEDED(client->GetNickname(), channelName));
+		return;
 	}
 	IRCClient* targetClient = client->GetServer()->GetClientByNickname(targetNick);
 	if (!targetClient)
 	{
-	    client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHNICK(client->GetNickname(), targetNick));
-	    return;
+		client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHNICK(client->GetNickname(), targetNick));
+		return;
 	}
 	if (currentChannel->isMember(targetClient))
 	{
-	    client->GetServer()->clientSendData(client->GetFd(), ERR_USERONCHANNEL(client->GetNickname(), targetNick, channelName));
-	    return;
+		client->GetServer()->clientSendData(client->GetFd(), ERR_USERONCHANNEL(client->GetNickname(), targetNick, channelName));
+		return;
 	}
 	currentChannel->inviteClient(targetClient);
 	client->GetServer()->clientSendData(targetClient->GetFd(), RPL_INVITING(client->GetNickname(), targetNick, channelName));
 	client->GetServer()->clientSendData(client->GetFd(), ":" + client->GetNickname() + " INVITE " + targetNick + " :" + channelName);
-//	if (targetClient->IsAway())//TODO: HAVE NOT IMPLEMENTED YET
-//	{
-//	    client->GetServer()->clientSendData(client->GetFd(), RPL_AWAY(client->GetNickname(), targetNick, targetClient->GetAwayMessage()));
-//	}
 }

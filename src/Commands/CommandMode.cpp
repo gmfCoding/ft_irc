@@ -66,16 +66,16 @@ void	CommandMode::handleOperatorPrivilegeMode(IRCChannel* channel, bool set, IRC
 		return;
 	}
 	IRCClient* targetClient = client->GetServer()->GetClientByNickname(parameters[0]);
-    if (set)
-    {
-        channel->addOperator(targetClient);
-        channel->broadcast(RPL_MODE_ADD_OPERATOR(client->GetNickname(), channel->GetName(), targetClient->GetNickname()));
-    }
-    else
-    {
-        channel->removeOperator(targetClient);
-        channel->broadcast(RPL_MODE_REMOVE_OPERATOR(client->GetNickname(), channel->GetName(), targetClient->GetNickname()));
-    }
+	if (set)
+	{
+		channel->addOperator(targetClient);
+		channel->broadcast(RPL_MODE_ADD_OPERATOR(client->GetNickname(), channel->GetName(), targetClient->GetNickname()));
+	}
+	else
+	{
+		channel->removeOperator(targetClient);
+		channel->broadcast(RPL_MODE_REMOVE_OPERATOR(client->GetNickname(), channel->GetName(), targetClient->GetNickname()));
+	}
 }
 
 void	CommandMode::handleUserLimitMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters)
@@ -108,8 +108,8 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 {
 	if (parameters.size() < 2)
 	{
-	    client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "MODE"));
-		return;
+		client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "MODE"));
+		return ;
 	}
 	std::string channelName = parameters[0];
 	std::string modeString = parameters[1];
@@ -117,12 +117,12 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 	if (!channel)
 	{
 		client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));
-		return;
+		return ;
 	}
 	if (!channel->isOperator(client))
 	{
 		client->GetServer()->clientSendData(client->GetFd(), ERR_CHANOPRIVSNEEDED(client->GetNickname(), channelName));
-		return;
+		return ;
 	}
 	bool set = true;
 	int parameterIndex = 2;
@@ -130,9 +130,9 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 	{
 		char mode = modeString[i];
 		if (mode == '+')
-		    set = true;
+			set = true;
 		else if (mode == '-')
-		    set = false;
+			set = false;
 		else
 		{
 			TypeMap_ModeHandlers::iterator kvp = modeHandlers.find(mode);
@@ -143,8 +143,8 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 				{
 					if (parameterIndex < parameters.size())
 					{
-					    modeParameters.push_back(parameters[parameterIndex]);
-					    parameterIndex++;
+						modeParameters.push_back(parameters[parameterIndex]);
+						parameterIndex++;
 					}
 					else
 					{

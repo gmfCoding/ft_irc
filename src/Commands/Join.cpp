@@ -1,10 +1,5 @@
 #include "Command.hpp"
 
-
-
-
-
-
 // TODO: check if the channel name is valid length <= 200)
 void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string>& parameters)
 {
@@ -14,21 +9,13 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 		return ;
 	}
 	std::vector<std::string> channels = splitString(parameters[0], ',');
-    std::vector<std::string> keys;
-    if (parameters.size() > 1)
-        keys = splitString(parameters[1], ',');
-	std::cout << "Channels: ";
-    for (const auto& channel : channels)
-        std::cout << channel << ".. ";
-    std::cout << "\nKeys: ";
-    for (const auto& key : keys)
-        std::cout << key << ".. ";
-    std::cout << std::endl;
-    for (size_t i = 0; i < channels.size(); ++i)
+	std::vector<std::string> keys;
+	if (parameters.size() > 1)
+		keys = splitString(parameters[1], ',');
+	for (size_t i = 0; i < channels.size(); ++i)
 	{
-        std::string channelName = channels[i];
-        std::string key = (i < keys.size()) ? keys[i] : "";
-		std::cout << channelName << "and the key = " << key << std::endl;
+		std::string channelName = channels[i];
+		std::string key = (i < keys.size()) ? keys[i] : "";
 		if (channelName.empty() || (channelName[0] != '&' && channelName[0] != '#'))
 		{
 			client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));
@@ -58,7 +45,6 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 		}
 		if (channel->GetUserLimit() != 0 && channel->isFull())
 		{
-			std::cout << "WEHAVE USER LIMIT" << std::endl;
 			client->GetServer()->clientSendData(client->GetFd(), ERR_CHANNELISFULL(client->GetNickname(), channelName));
 			return ;
 		}

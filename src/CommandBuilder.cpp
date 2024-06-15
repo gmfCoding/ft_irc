@@ -25,7 +25,7 @@ void	CommandBuilder::processCommand(IRCClient* client, const std::string& buffer
 }
 
 /*
-	combine paramteres back into 1 parameters from the leadking colon:
+	combine paramteres back into 1 parameters from the leading colon:
 */
 void	CommandBuilder::handleMultiWordParameters(std::vector<std::string>& parameters)
 {
@@ -84,16 +84,16 @@ std::vector<std::string> CommandBuilder::tokenizeBuffer(const std::string& buffe
 			break;
 		}
 		tokens.push_back(token);
-    }
-    return (tokens);
+	}
+	return (tokens);
 }
 
 /*
-    gets the first token as the command
+	gets the first token as the command
 */
 std::string CommandBuilder::extractCommand(const std::vector<std::string>& tokens)
 {
-    return tokens.empty() ? "" : tokens[0];
+	return tokens.empty() ? "" : tokens[0];
 }
 
 /*
@@ -101,7 +101,7 @@ std::string CommandBuilder::extractCommand(const std::vector<std::string>& token
 */
 std::vector<std::string> CommandBuilder::extractParameters(const std::vector<std::string>& tokens)
 {
-    return tokens.size() > 1 ? std::vector<std::string>(tokens.begin() + 1, tokens.end()) : std::vector<std::string>();
+	return tokens.size() > 1 ? std::vector<std::string>(tokens.begin() + 1, tokens.end()) : std::vector<std::string>();
 }
 
 /*
@@ -109,16 +109,13 @@ std::vector<std::string> CommandBuilder::extractParameters(const std::vector<std
 */
 void CommandBuilder::routeCommand(IRCClient* client, const std::string& command, const std::vector<std::string>& parameters, AuthLevel authLevel)
 {
-	for (std::vector<std::string>::const_iterator param = parameters.begin(); param != parameters.end(); ++param)
-        std::cout << *param << " "; 
-    std::cout << std::endl;
-    for (std::vector<Command>::const_iterator it = availableCommands.begin(); it != availableCommands.end(); ++it)
-    {
-        if (command == (*it).GetName() && authLevel >=(*it).GetAuthLevel())
-        {
-            (*it).execute(client, parameters);
-            return;
-        }
-    }
-    client->GetServer()->clientSendData(client->GetFd(), ERR_UNKNOWNCOMMAND(client->GetNickname(), command));
+	for (std::vector<Command>::const_iterator it = availableCommands.begin(); it != availableCommands.end(); ++it)
+	{
+		if (command == (*it).GetName() && authLevel >=(*it).GetAuthLevel())
+		{
+			(*it).execute(client, parameters);
+			return ;
+		}
+	}
+	client->GetServer()->clientSendData(client->GetFd(), ERR_UNKNOWNCOMMAND(client->GetNickname(), command));
 }

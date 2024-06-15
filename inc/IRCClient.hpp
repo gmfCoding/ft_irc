@@ -62,9 +62,6 @@ public:
 	void			removeChannel(IRCChannel* channel);
 	void			addChannel(IRCChannel* channel);
 	std::unordered_set<IRCChannel*>	GetChannels() const;
-
-//	void			SetCurrentChannel(IRCChannel* channel);
-//	IRCChannel*		GetCurrentChannel() const;
 };
 
 
