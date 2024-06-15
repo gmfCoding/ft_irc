@@ -137,9 +137,8 @@ void	IRCServer::clientAccept()
     clientPollFd.events = POLLIN;
     clientPollFd.revents = 0;
 	pollFds.push_back(clientPollFd);
-	//pollFds.push_back({clientFd, POLLIN, 0});
 	clients[clientFd] = new IRCClient(clientFd, this);
-	std::cout << "accepted client connection, FD: " << clientFd << std::endl;
+	std::cout << "\033[1;32m" << "accepted client connection, FD: " << "\033[0m" << clientFd << std::endl;
 }
 
 /*
@@ -148,7 +147,7 @@ void	IRCServer::clientAccept()
 */
 void IRCServer::clientRemove(int clientFd)
 {
-	close(clientFd);
+	//close(clientFd);
 	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
 	{
 		if (it->fd == clientFd)
@@ -177,18 +176,28 @@ void IRCServer::clientHandle(IRCClient* client)
 	}
 	buffer[bytesRead] = '\0';
 	client->addData(buffer);
-
-    std::string commandBuffer = client->GetData();
-    size_t pos;
-    while ((pos = commandBuffer.find("\r\n")) != std::string::npos)
-    {
-        std::string rawCommand = commandBuffer.substr(0, pos);
-//		std::cout << rawCommand << std::endl;
-        commandBuffer.erase(0, pos + 2);
-        CommandBuilder commandBuilder(this);
-        commandBuilder.processCommand(client, rawCommand);
-    }
-    client->clearData();
+	std::cout << "buffer = " << buffer << std::endl;
+	std::string commandBuffer = client->GetData();
+	size_t pos;
+	while ((pos = commandBuffer.find_first_of("\r\n")) != std::string::npos)
+	{
+		size_t end = commandBuffer.find("\r\n");
+		if (end == std::string::npos)
+			end = commandBuffer.find("\n");
+		if (end != std::string::npos)
+		{
+			std::string rawCommand = commandBuffer.substr(0, end);
+			if (commandBuffer[end] == '\r' && commandBuffer[end + 1] == '\n')
+			    commandBuffer.erase(0, end + 2); // "\r\n"
+			else
+			    commandBuffer.erase(0, end + 1); // "\n"
+			CommandBuilder commandBuilder(this);
+			commandBuilder.processCommand(client, rawCommand);
+		}
+		else
+			break ;
+	}
+	client->SetData(commandBuffer);
 }
 
 /*
@@ -199,15 +208,15 @@ void IRCServer::clientHandle(IRCClient* client)
 */
 void	IRCServer::clientSendData(int clientFd, const std::string& data)
 {
-    //std::string formattedData = data + "\r\n"; // IRC messages end with CRLF//already sending with macros
-    ssize_t bytesSent = send(clientFd, data.c_str(), data.size(), 0);
-    if (bytesSent == -1)
+	//std::string formattedData = data + "\r\n"; // IRC messages end with CRLF//already sending with macros
+	ssize_t bytesSent = send(clientFd, data.c_str(), data.size(), 0);
+	if (bytesSent == -1)
 	{
 		this->err = ERR_SEND;
-        std::cout << "failed to send data to client" << std::endl;
+		std::cout << "failed to send data to client" << std::endl;
 		// TODO: handle errors properly maybe remove client
 		//clientRemove(clientFd);
-    }
+	}
 }
 
 IRCChannel* IRCServer::GetChannel(const std::string& channelName)
@@ -224,4 +233,19 @@ IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 		if (kvp->second->GetNickname() == nickname)
 			return (kvp->second);
 	return (nullptr);
+}
+
+bool	IRCServer::isNicknameInUse(const std::string& nickname)
+{
+	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
+		if (kvp->second->GetNickname() == nickname)
+			return (true);
+	return (false);
+}
+
+void IRCServer::removeChannel(const std::string& channelName)
+{
+	ChannelIterator kvp = channels.find(channelName);
+	if (kvp != channels.end())
+		channels.erase(kvp);
 }

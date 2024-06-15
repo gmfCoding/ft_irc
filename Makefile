@@ -7,7 +7,7 @@ SRCSF = $(TEST) \
 		Commands/Invite.cpp \
 		Commands/Join.cpp \
 		Commands/Kick.cpp \
-		Commands/Mode.cpp \
+		Commands/CommandMode.cpp \
 		Commands/Nick.cpp \
 		Commands/Part.cpp \
 		Commands/Pass.cpp \
@@ -22,6 +22,7 @@ INCSF = IRCServer.hpp \
 		IRCRespondMacros.hpp \
 		CommandBuilder.hpp \
 		Command.hpp \
+		CommandMode.hpp \
 		AuthLevel.hpp 
 
 ifndef $(TEST)
