@@ -3,7 +3,7 @@
 # include <iostream>
 # include <unistd.h>
 # include <netinet/in.h>
-# include <unordered_set>
+# include <set>
 # include "CommandBuilder.hpp"
 # include "AuthLevel.hpp"
 
@@ -32,12 +32,16 @@ private:
 	std::string hostname;
 	IRCServer*	server;
 	//IRCChannel*	currentChannel;
-	std::unordered_set<IRCChannel*> channelsIn;
+	std::set<IRCChannel*> channelsIn;
 	bool Auth[AUTH_STATUS_COUNT];
+
+    bool markedForDeletion;
 public:
 	IRCClient();
 	IRCClient(int clientFd, IRCServer* server, const std::string& host);
 	~IRCClient();
+	void			markForDeletion();
+    bool			isMarkedForDeletion() const;
 	void			SetFd(int clientFd);
 	int				GetFd() const;
 	std::string&	GetNickname();
@@ -63,7 +67,7 @@ public:
 	void			authenticate();
 	void			removeChannel(IRCChannel* channel);
 	void			addChannel(IRCChannel* channel);
-	std::unordered_set<IRCChannel*>	GetChannels() const;
+	std::set<IRCChannel*>	GetChannels() const;
 };
 
 

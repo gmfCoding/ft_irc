@@ -8,8 +8,9 @@ void Command::handlePartCommand(IRCClient* client, const std::vector<std::string
 		return;
 	}
 	std::vector<std::string> channels = splitString(parameters[0], ',');
-	for (const std::string& channelName : channels)
+	for (std::vector<std::string>::const_iterator it = channels.begin(); it != channels.end(); ++it)
 	{
+		const std::string& channelName = *it;
 		IRCChannel* channel = client->GetServer()->GetChannel(channelName);
 		if (!channel)
 		{

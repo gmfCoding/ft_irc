@@ -6,7 +6,7 @@
 # include "IRCChannel.hpp"
 # include "IRCServer.hpp"
 # include <functional>
-# include <unordered_map>
+# include <map>
 # include <vector>
 # include <string>
 
@@ -17,8 +17,8 @@ class CommandMode
 {
 private:
 
-	typedef		std::unordered_map<char, void (*)(IRCChannel*, bool, IRCClient*, const std::vector<std::string>&)> TypeMap_ModeHandlers;
-	static		TypeMap_ModeHandlers modeHandlers;
+	typedef		std::map<char, void (*)(IRCChannel*, bool, IRCClient*, const std::vector<std::string>&)> TypeMap_ModeHandlers;
+	static TypeMap_ModeHandlers			modeHandlers;
 	static void	populateModeHandlers();
 	static void	handleInviteOnlyMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters);
 	static void	handleTopicRestrictionMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters);

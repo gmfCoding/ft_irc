@@ -23,7 +23,8 @@ INCSF = IRCServer.hpp \
 		CommandBuilder.hpp \
 		Command.hpp \
 		CommandMode.hpp \
-		AuthLevel.hpp 
+		AuthLevel.hpp \
+		GlobalVariables.hpp
 
 ifndef $(TEST)
 TEST=main.cpp
@@ -56,7 +57,7 @@ CXX = c++
 
 WFLAGS =  #-Wall -Werror -Wextra
 CPPFLAGS = -I$(DIRINC) $(LIB-I) -MMD -MP
-CXXFLAGS = -std=c++98 $(OPFLAG) $(DFLAGS) $(XCFLAGS) $(WFLAGS)
+CXXFLAGS = $(OPFLAG) $(DFLAGS) $(XCFLAGS) $(WFLAGS) -std=c++98 
 LDFLAGS = $(OPFLAG) $(DFLAGS) $(XLDFLAGS)
 #OPFLAG = -O3 -flto -march=native -mtune=native -msse4.2 
 

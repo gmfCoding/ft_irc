@@ -1,36 +1,33 @@
-#include "IRCServer.hpp"
 #include <stdlib.h>
 #include <csignal>
+#include "GlobalVariables.hpp"
+#include "IRCServer.hpp"
 
+bool continueRunning = true;
 
-/*
 void displayWelcomeMessage()
 {
-    std::string welcomeMessage = "\033[1;31m" R"(
-  _______   ______         _   _____       _____ 
- |  _____| |__  __|       | | |  __  \   /   _   \
- | |____      | |         | | | |_ / /  /  /   \__\
- |  ____|     | |         | | |  _  \  |  |     __
- | |          | |  ____   | | | | \  \  \  \ _ /  /
- |_|          |_| |____|  |_| |_|  \_ \  \_______/  by Chris,Kyle,Travis
-                                     
-    )" "\033[0m";
-    std::cout << welcomeMessage << std::endl;
+    std::string colorStart = "\033[1;31m"; // Set text color to red
+    std::string welcomeMessage = 
+    "  _______   ______         _   _____       _____ \n"
+    " |  _____| |__  __|       | | |  __  \\   /   _   \\\n"
+    " | |____      | |         | | | |_ / /  /  /   \\__\\\n"
+    " |  ____|     | |         | | |  _  \\  |  |     __\n"
+    " | |          | |  ____   | | | | \\  \\  \\  \\ _ /  /\n"
+    " |_|          |_| |____|  |_| |_|  \\_ \\  \\_______/  by Chris,Kyle,Travis\n"
+    "                                     \n";
+    std::string colorEnd = "\033[0m"; // Reset text color
+    std::cout << colorStart << welcomeMessage << colorEnd << std::endl;
 }
-*/
 
 void handleCtrlC(int sig)
 {
-	std::cout << "\n Handle closing with control c" << std::endl;
-	//maybe have a global bool, to stop there sever running loop instead of having it set to true
-	//handle clean up and exit code
-
-	exit (0);
+	continueRunning = false;
 }
 
 int main(int argc, char **argv)
 {
-    //displayWelcomeMessage();
+    displayWelcomeMessage();
     if (argc != 3)
         return (1);
     signal(SIGINT, handleCtrlC);

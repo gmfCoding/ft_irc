@@ -73,7 +73,7 @@ std::vector<std::string> CommandBuilder::tokenizeBuffer(const std::string& buffe
 
 	while (ss >> token)
 	{
-		if (token.front() == ':')
+		if (token[0] == ':')
 		{
 			std::string rest;
 			std::getline(ss, rest);
@@ -109,6 +109,8 @@ std::vector<std::string> CommandBuilder::extractParameters(const std::vector<std
 */
 void CommandBuilder::routeCommand(IRCClient* client, const std::string& command, const std::vector<std::string>& parameters, AuthLevel authLevel)
 {
+	if (client == NULL)
+		return ;
 	for (std::vector<Command>::const_iterator it = availableCommands.begin(); it != availableCommands.end(); ++it)
 	{
 		if (command == (*it).GetName() && authLevel >=(*it).GetAuthLevel())

@@ -1,7 +1,7 @@
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
 # include <vector>
-# include <functional>
+//# include <functional>
 # include "IRCRespondMacros.hpp"
 # include "AuthLevel.hpp"
 # include "IRCClient.hpp"
@@ -19,11 +19,13 @@ class Command
 private:
 	std::string															name;
 	AuthLevel															minAuthLevel;
-	std::function<void(IRCClient*, const std::vector<std::string>&)>	function;
+	//std::function<void(IRCClient*, const std::vector<std::string>&)>	function;
+	void            (*function)(IRCClient*, const std::vector<std::string>&);
 public:
 	static CommandMode commandMode;
     Command();
-	Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func);
+	//Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func);
+	Command(const std::string& name, AuthLevel level, void (*func)(IRCClient*, const std::vector<std::string>&));
 	~Command();
 	static std::vector<std::string>		splitString(const std::string& str, char delimiter);
 	const std::string&					GetName() const;

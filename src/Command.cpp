@@ -2,7 +2,10 @@
 
 Command::Command(){}
 
-Command::Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func)
+//Command::Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func)
+//				: name(name), minAuthLevel(level), function(func) {}
+
+Command::Command(const std::string& name, AuthLevel level, void (*func)(IRCClient*, const std::vector<std::string>&))
 				: name(name), minAuthLevel(level), function(func) {}
 Command::~Command() { return ; }
 
@@ -18,7 +21,7 @@ std::vector<std::string> Command::splitString(const std::string& str, char delim
 	std::string token;
 	while (std::getline(ss, token, delimiter))
 		tokens.push_back(token);
-	if (str.back() == delimiter)
+	if (!str.empty() && str[str.size() - 1] == delimiter)
 		tokens.push_back("");// capture empty bit
 	return (tokens);
 }

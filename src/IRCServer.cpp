@@ -1,4 +1,5 @@
 #include "IRCServer.hpp"
+#include "GlobalVariables.hpp"
 
 /*
 	run the server setup
@@ -17,17 +18,22 @@ void		IRCServer::addChannel(IRCChannel* channel) { channels[channel->GetName()] 
 */
 IRCServer::~IRCServer()
 {
-	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
-	{
-		std::cout << "closed fd for " << kvp->first << std::endl;
-		delete kvp->second;
-	}
+	//for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
+	//{
+	//	std::cout << "closed fd for " << kvp->first << std::endl;
+	//	delete kvp->second;
+	//}
 	serverShutdown();
 }
 
 std::map<int, IRCClient*> IRCServer::GetClients(){ return (this->clients); }
 
-std::string IRCServer::GetPortName(){ return std::to_string(this->_port); }
+std::string IRCServer::GetPortName()
+{
+	std::ostringstream oss;
+	oss << this->_port;
+	return (oss.str());
+}
 
 char*	IRCServer::GetPassword() { return(this->_password); }
 
@@ -100,11 +106,13 @@ ErrorCode IRCServer::serverSetup()
 		short  events   The input event flags . 
 		short  revents  The output event flags .
 */
+
+/*
 ErrorCode IRCServer::Run()
 {
 	if (this->err != ERR_NO_ERROR)
 		return (this->err);
-	while (true && this->err == ERR_NO_ERROR)
+	while (continueRunning && this->err == ERR_NO_ERROR)
 	{
 		//int pollCount = poll(pollFds.data(), pollFds.size(), 100);
 		int pollCount = poll(pollFds.data(), pollFds.size(), -1);
@@ -121,7 +129,44 @@ ErrorCode IRCServer::Run()
 			}
 		}
 	}
+	return (ERR_NO_ERROR);
+}
+*/
 
+ErrorCode IRCServer::Run()
+{
+	if (this->err != ERR_NO_ERROR)
+		return (this->err);
+
+	while (continueRunning && this->err == ERR_NO_ERROR)
+	{
+		int pollCount = poll(&pollFds[0], pollFds.size(), -1);
+		if (pollCount == -1)
+			return (ERR_POLL);
+		std::vector<int> fdsToHandle;
+		for (size_t i = 0; i < pollFds.size(); ++i)
+			if (pollFds[i].revents & POLLIN)
+				fdsToHandle.push_back(pollFds[i].fd);
+		for (size_t i = 0; i < fdsToHandle.size(); ++i)
+		{
+			int fd = fdsToHandle[i];
+			if (fd == serverFd)
+				clientAccept();
+			else
+				if (clients.find(fd) != clients.end())
+					clientHandle(clients[fd]);
+		}
+		std::vector<int> clientsToDelete;
+		for (ClientIterator it = clients.begin(); it != clients.end(); ++it)
+			if (it->second->isMarkedForDeletion())
+				clientsToDelete.push_back(it->first);
+		for (size_t i = 0; i < clientsToDelete.size(); ++i)
+		{
+			int fd = clientsToDelete[i];
+			delete clients[fd];
+			clients.erase(fd);
+		}
+	}
 	return (ERR_NO_ERROR);
 }
 
@@ -144,7 +189,7 @@ std::string IRCServer::retriveHostName(){
 
 void	IRCServer::clientAccept()
 {
-	int clientFd = accept(serverFd, nullptr, nullptr);
+	int clientFd = accept(serverFd, NULL, NULL);
 	if (clientFd == -1)
 		return ;
 	if(fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1)
@@ -169,7 +214,7 @@ void	IRCServer::clientAccept()
 */
 void IRCServer::erasePollFd(int clientFd)
 {
-	//close(clientFd);
+
 	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
 	{
 		if (it->fd == clientFd)
@@ -178,23 +223,32 @@ void IRCServer::erasePollFd(int clientFd)
 			break ;
 		}
 	}
-	//might already be deleting somewhere else, double check
-	delete clients.at(clientFd);
-	clients.erase(clientFd);
 }
 
 void IRCServer::clientRemove(int clientfd)
 {
-	erasePollFd(clientfd);
-	if (clients.find(clientfd) !=  clients.end())
-		clients.erase(clientfd);
+	ClientIterator it = clients.find(clientfd);
+	if (it != clients.end())
+	{
+		IRCClient* client = it->second;
+		std::set<IRCChannel*> channels = client->GetChannels();
+		for (std::set<IRCChannel*>::iterator chanIt = channels.begin(); chanIt != channels.end(); ++chanIt)
+		{
+			IRCChannel* channel = *chanIt;
+			channel->removeMember(client);
+			if (channel->GetMemberList().empty())
+				removeChannel(channel->GetName());
+		}
+		client->markForDeletion();
+		erasePollFd(clientfd);
+	}
 }
+
 /*
 	here is here we read the data
 	recv is used to retrieve data from a connection
 	recv(file descriptor of client, a place to store the data, the max sife of the data length, optional flag)
 */
-
 void IRCServer::clientHandle(IRCClient* client)
 {
 	char buffer[512];
@@ -255,25 +309,29 @@ IRCChannel* IRCServer::GetChannel(const std::string& channelName)
 	ChannelIterator kvp = channels.find(channelName);
 	if (kvp != channels.end())
 		return (kvp->second);
-	return (nullptr);
+	return (NULL);
 }
 
 void IRCServer::serverShutdown()
 {
-	if (this->clients.size() > 0){
-		for(auto it = clients.begin(); it != clients.end(); it++){
+	if (this->clients.size() > 0) {
+		for (ClientIterator it = clients.begin(); it != clients.end(); ++it) {
 			IRCClient* client = it->second;
 			clientRemove(client->GetFd());
+			delete client;
 		}
 	}
-	if (this->channels.size() > 0){
-		for(auto it = channels.begin(); it != channels.end(); it++){
+	if (this->channels.size() > 0) {
+		for (ChannelIterator it = channels.begin(); it != channels.end(); ++it) {
 			IRCChannel* chris_chan = it->second;
 			chris_chan->channelShutDown();
+			delete chris_chan;
 		}
 	}
+	channels.clear();
 	if (serverFd)
 		close(serverFd);
+	std::cout  << "\033[1;32m" << "☺ Server has been shut down gracefully ☻" << "\033[0m" << std::endl;
 }
 //we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
 
@@ -282,7 +340,7 @@ IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
 		if (kvp->second->GetNickname() == nickname)
 			return (kvp->second);
-	return (nullptr);
+	return (NULL);
 }
 
 bool	IRCServer::isNicknameInUse(const std::string& nickname)
@@ -297,5 +355,8 @@ void IRCServer::removeChannel(const std::string& channelName)
 {
 	ChannelIterator kvp = channels.find(channelName);
 	if (kvp != channels.end())
+	{
+		delete kvp->second;
 		channels.erase(kvp);
+	}
 }

@@ -20,7 +20,9 @@
 # include "IRCChannel.hpp"
 # include "Command.hpp"
 
+#ifndef HOST_NAME_MAX
 # define HOST_NAME_MAX 255
+#endif
 class IRCClient;
 class IRCChannel;
 

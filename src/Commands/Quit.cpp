@@ -18,15 +18,15 @@ void Command::handleQuitCommand(IRCClient* client, const std::vector<std::string
 	// 	}
 	// }
     // client->GetServer()->clientSendData(client->GetFd(), formated);
-    std::unordered_set<IRCChannel*> channels = client->GetChannels();
-    for(IRCChannel* channel : channels){
-        channel->broadcast(msg, client->GetFd());
+    std::set<IRCChannel*> channels = client->GetChannels();
+    for (std::set<IRCChannel*>::iterator it = channels.begin(); it != channels.end(); ++it){
+        (*it)->broadcast(formated, client->GetFd());
     }
-    for(IRCChannel* channel : channels){
-        channel->removeMember(client);
-        if (channel->GetMemberList().empty())
-            server->removeChannel(channel->GetName());
+    for (std::set<IRCChannel*>::iterator it = channels.begin(); it != channels.end(); ++it){
+        (*it)->removeMember(client);
+        if ((*it)->GetMemberList().empty())
+            server->removeChannel((*it)->GetName());
     }
-    server->clientSendData(client->GetFd(), msg);
+    server->clientSendData(client->GetFd(), formated);
 	client->GetServer()->clientRemove(client->GetFd());
 }

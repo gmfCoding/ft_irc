@@ -3,13 +3,12 @@
 
 # include <string>
 # include <set>
-# include <unordered_set>
 # include "IRCClient.hpp"
 # include "Command.hpp"
 
 class IRCClient;
 
-typedef std::unordered_set<IRCClient*>::const_iterator MemberIterator;
+typedef std::set<IRCClient*>::const_iterator MemberIterator;
 
 class IRCChannel
 {
@@ -17,10 +16,10 @@ private:
 	std::string						name;
 	std::string						key;
 	std::string						topic;
-	std::unordered_set<IRCClient*>	members;
-	std::unordered_set<IRCClient*>	operators;
-	std::unordered_set<IRCClient*>	invited;
-	std::unordered_set<IRCClient*>	bannedClients;
+	std::set<IRCClient*>			members;
+	std::set<IRCClient*>			operators;
+	std::set<IRCClient*>			invited;
+	std::set<IRCClient*>			bannedClients;
 	bool							inviteOnly;
 	bool							topicRestricted;
 	int								userLimit;

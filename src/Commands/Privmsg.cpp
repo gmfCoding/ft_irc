@@ -15,8 +15,9 @@ void Command::handlePrivmsgCommand(IRCClient* client, const std::vector<std::str
 		return ;
 	}
 	std::vector<std::string> receiverList = splitString(receivers, ',');
-	for (const std::string& receiver : receiverList)
+	for (std::vector<std::string>::const_iterator it = receiverList.begin(); it != receiverList.end(); it++)
 	{
+		const std::string& receiver = *it;
 		if (receiver[0] == '#' || receiver[0] == '&')
 		{
 			IRCChannel* channel = client->GetServer()->GetChannel(receiver);

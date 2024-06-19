@@ -87,7 +87,7 @@ void	CommandMode::handleUserLimitMode(IRCChannel* channel, bool set, IRCClient* 
 			client->GetServer()->clientSendData(client->GetFd(), ERR_NEEDMOREPARAMS(client->GetNickname(), "MODE"));
 			return;
 		}
-		int limit = std::stoi(parameters[0]);
+		int limit = atoi(parameters[0].c_str());
 		channel->SetUserLimit(limit);
 		channel->broadcast(RPL_MODE(client->GetNickname(), channel->GetName(), "+l", parameters[0]));
 	}

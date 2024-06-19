@@ -8,7 +8,7 @@
 // }
 IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
-IRCChannel::~IRCChannel() { delete this; return ; std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
+IRCChannel::~IRCChannel() { std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
 
 
 int							IRCChannel::GetUserLimit() { return (userLimit); }
@@ -58,24 +58,27 @@ std::string IRCChannel::GetMemberList() const
 		else
 			memberList += (*it)->GetNickname() + " ";
 	}
-	if (!memberList.empty() && memberList.back() == ' ')
-		memberList.pop_back();
+	if (!memberList.empty() && *memberList.rbegin() == ' ')
+        memberList.erase(memberList.size() - 1);
+	//if (!memberList.empty() && memberList.back() == ' ')
+	//	memberList.pop_back();
 	return (memberList);
 }
 
 void IRCChannel::channelShutDown(){
+	std::cout << "GET RID OF REF channelShutdown called" << std::endl;
 	if (members.size() > 0){
-		for(auto it = members.begin(); it != members.end(); it++){
-			IRCClient* member = *it;
-			removeMember(member);
+		for(MemberIterator it = members.begin(); it != members.end(); ++it){
+			(*it)->removeChannel(this);
 		}
 	}
+	members.clear();
 	if (operators.size() > 0){
-		for(auto it = operators.begin(); it != operators.end(); it++){
-			IRCClient* op = *it;
-			removeMember(op);
+		for(MemberIterator it = operators.begin(); it != operators.end(); ++it){
+			(*it)->removeChannel(this);
 		}
 	}
+	operators.clear();
 }
 //only need these function if we add more functionality which is not aprt of subject
 bool IRCChannel::isBanned(IRCClient* client) const { return bannedClients.find(client) != bannedClients.end(); }
