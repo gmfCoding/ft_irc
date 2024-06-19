@@ -24,7 +24,7 @@
 			"request": "launch",
 			"name": "LLDB Launch",
 			"program": "${workspaceFolder}/ircserv",
-			"args": ["21345", "password"],
+			"args": ["6667", "123"],
 			"cwd": "${workspaceFolder}",
 			"preLaunchTask": "Build Debug"
 		}

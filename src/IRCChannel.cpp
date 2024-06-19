@@ -1,8 +1,15 @@
 #include "IRCChannel.hpp"
 
+
+// IRCChannel::IRCChannel() { return ; }
+// IRCChannel::IRCChannel(const std::string& channelName) : name(channelName) { return ; }
+// IRCChannel::~IRCChannel() {
+// 	channelShutDown();
+// }
 IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::~IRCChannel() { delete this; return ; std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
+
 
 int							IRCChannel::GetUserLimit() { return (userLimit); }
 const std::string&			IRCChannel::GetName() const { return (name); }
@@ -56,6 +63,20 @@ std::string IRCChannel::GetMemberList() const
 	return (memberList);
 }
 
+void IRCChannel::channelShutDown(){
+	if (members.size() > 0){
+		for(auto it = members.begin(); it != members.end(); it++){
+			IRCClient* member = *it;
+			removeMember(member);
+		}
+	}
+	if (operators.size() > 0){
+		for(auto it = operators.begin(); it != operators.end(); it++){
+			IRCClient* op = *it;
+			removeMember(op);
+		}
+	}
+}
 //only need these function if we add more functionality which is not aprt of subject
 bool IRCChannel::isBanned(IRCClient* client) const { return bannedClients.find(client) != bannedClients.end(); }
 void IRCChannel::banClient(IRCClient* client) { bannedClients.insert(client); }

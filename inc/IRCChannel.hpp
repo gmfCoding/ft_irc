@@ -5,6 +5,7 @@
 # include <set>
 # include <unordered_set>
 # include "IRCClient.hpp"
+# include "Command.hpp"
 
 class IRCClient;
 
@@ -53,6 +54,7 @@ public:
 	bool						isInvited(IRCClient* client) const;
 	bool						isOperator(IRCClient* client) const;
 	bool						isMember(IRCClient* client) const;
+	void                        channelShutDown();
 	bool						isInviteOnly() const;
 
 //VVis not mandatoryVV

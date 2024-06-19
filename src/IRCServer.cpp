@@ -3,9 +3,13 @@
 /*
 	run the server setup
 */
-IRCServer::IRCServer(int port, char *password) : _port(port), _password(password) {	this->err = serverSetup(); }
+IRCServer::IRCServer(int port, char *password) : _port(port), _password(password)
+{
+	this->err = serverSetup();
+	if (err != 0)
+		serverShutdown();
+}
 
-char*		IRCServer::GetPassword() { return(this->_password); }
 void		IRCServer::addChannel(IRCChannel* channel) { channels[channel->GetName()] = channel; }
 
 /*
@@ -18,8 +22,14 @@ IRCServer::~IRCServer()
 		std::cout << "closed fd for " << kvp->first << std::endl;
 		delete kvp->second;
 	}
-	close(serverFd);
+	serverShutdown();
 }
+
+std::map<int, IRCClient*> IRCServer::GetClients(){ return (this->clients); }
+
+std::string IRCServer::GetPortName(){ return std::to_string(this->_port); }
+
+char*	IRCServer::GetPassword() { return(this->_password); }
 
 /*
 	here we create a socked/file desciptor i use a try catch
@@ -52,18 +62,18 @@ ErrorCode IRCServer::serverSetup()
 		serverFd = socket(AF_INET, SOCK_STREAM, 0);
 		int opt = 1;
 		if (serverFd == -1)
-			throw std::runtime_error("Failed to create socket");
+			throw ServerException("Failed to create socket");
 		if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
-			throw std::runtime_error("setsockopt failed");
+			throw ServerException("setsockopt failed");
 		if(fcntl(serverFd, F_SETFL, O_NONBLOCK) == -1)
-			throw std::runtime_error("fcntl failed");
+			throw ServerException("fcntl failed");
 		serverAddr.sin_family = AF_INET;
 		serverAddr.sin_addr.s_addr = INADDR_ANY;
 		serverAddr.sin_port = htons(_port);
 		if (bind(serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
-			throw std::runtime_error("Bind failed");
+			throw ServerException("Bind failed");
 		if (listen(serverFd, SOMAXCONN) == -1)
-			throw std::runtime_error("Listen failed");
+			throw ServerException("Listen failed");
 		struct pollfd serverPollFd;
     	serverPollFd.fd = serverFd;
     	serverPollFd.events = POLLIN;
@@ -72,7 +82,7 @@ ErrorCode IRCServer::serverSetup()
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		std::cerr << "SERVER SETUP ERR: " << e.what() << "\n Exit Code: " << ERR_SETUP << "\nExiting..." << std::endl;
 		return (ERR_SETUP);
 	}
 	return (ERR_NO_ERROR);
@@ -111,6 +121,7 @@ ErrorCode IRCServer::Run()
 			}
 		}
 	}
+
 	return (ERR_NO_ERROR);
 }
 
@@ -122,6 +133,15 @@ ErrorCode IRCServer::Run()
 	we add the fd to the pollfds so we can check it for data in our loop
 
 */
+
+std::string IRCServer::retriveHostName(){
+	char host[HOST_NAME_MAX];
+	if (gethostname(host, sizeof(host)) == 0)
+		return std::string(host);
+	else
+		return "Unknown";
+}
+
 void	IRCServer::clientAccept()
 {
 	int clientFd = accept(serverFd, nullptr, nullptr);
@@ -136,8 +156,10 @@ void	IRCServer::clientAccept()
     clientPollFd.fd = clientFd;
     clientPollFd.events = POLLIN;
     clientPollFd.revents = 0;
-	pollFds.push_back(clientPollFd);
-	clients[clientFd] = new IRCClient(clientFd, this);
+	std::string host = retriveHostName();
+	//std::cout << "ASDASDASD  " << host << std::endl;
+	pollFds.push_back((struct pollfd){clientFd, POLLIN, 0});
+	clients[clientFd] = new IRCClient(clientFd, this, host);
 	std::cout << "\033[1;32m" << "accepted client connection, FD: " << "\033[0m" << clientFd << std::endl;
 }
 
@@ -145,7 +167,7 @@ void	IRCServer::clientAccept()
 	removes client and closed fd's, and removes from the pollfds
 	remove_if Remove elements from range
 */
-void IRCServer::clientRemove(int clientFd)
+void IRCServer::erasePollFd(int clientFd)
 {
 	//close(clientFd);
 	for (std::vector<pollfd>::iterator it = pollFds.begin(); it != pollFds.end(); ++it)
@@ -156,15 +178,23 @@ void IRCServer::clientRemove(int clientFd)
 			break ;
 		}
 	}
+	//might already be deleting somewhere else, double check
 	delete clients.at(clientFd);
 	clients.erase(clientFd);
 }
 
+void IRCServer::clientRemove(int clientfd)
+{
+	erasePollFd(clientfd);
+	if (clients.find(clientfd) !=  clients.end())
+		clients.erase(clientfd);
+}
 /*
 	here is here we read the data
 	recv is used to retrieve data from a connection
 	recv(file descriptor of client, a place to store the data, the max sife of the data length, optional flag)
 */
+
 void IRCServer::clientHandle(IRCClient* client)
 {
 	char buffer[512];
@@ -227,6 +257,25 @@ IRCChannel* IRCServer::GetChannel(const std::string& channelName)
 		return (kvp->second);
 	return (nullptr);
 }
+
+void IRCServer::serverShutdown()
+{
+	if (this->clients.size() > 0){
+		for(auto it = clients.begin(); it != clients.end(); it++){
+			IRCClient* client = it->second;
+			clientRemove(client->GetFd());
+		}
+	}
+	if (this->channels.size() > 0){
+		for(auto it = channels.begin(); it != channels.end(); it++){
+			IRCChannel* chris_chan = it->second;
+			chris_chan->channelShutDown();
+		}
+	}
+	if (serverFd)
+		close(serverFd);
+}
+//we could have the client in a map with a string instead of a int(fdsockect) so we dont need to loop through clients
 
 IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 {

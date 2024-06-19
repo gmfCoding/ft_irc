@@ -22,6 +22,7 @@ private:
 	std::function<void(IRCClient*, const std::vector<std::string>&)>	function;
 public:
 	static CommandMode commandMode;
+    Command();
 	Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func);
 	~Command();
 	static std::vector<std::string>		splitString(const std::string& str, char delimiter);
@@ -34,7 +35,7 @@ public:
 	static void			handlePassCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleJoinCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handlePrivmsgCommand(IRCClient* client, const std::vector<std::string>& parameters);
-	static void			handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters);
+    static void			handleQuitCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleModeCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleTopicCommand(IRCClient* client, const std::vector<std::string>& parameters);
 	static void			handleInviteCommand(IRCClient* client, const std::vector<std::string>& parameters);

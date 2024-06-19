@@ -29,13 +29,14 @@ private:
 	std::string username;
 	std::string realname;
 	std::string buffer;
+	std::string hostname;
 	IRCServer*	server;
 	//IRCChannel*	currentChannel;
 	std::unordered_set<IRCChannel*> channelsIn;
 	bool Auth[AUTH_STATUS_COUNT];
 public:
 	IRCClient();
-	IRCClient(int clientFd, IRCServer* server);
+	IRCClient(int clientFd, IRCServer* server, const std::string& host);
 	~IRCClient();
 	void			SetFd(int clientFd);
 	int				GetFd() const;
@@ -55,6 +56,7 @@ public:
 	void			clearData();
 	IRCServer*		GetServer() const;
 	std::string		GetHostname();
+	std::string		GetHost();
 	bool			isInChannel(IRCChannel* channel) const;
 	void			SetAuthStatus(AuthStatus status, bool received);
 	bool			GetAuthStatus(AuthStatus status) const;

@@ -9,12 +9,18 @@
 # include <poll.h>
 # include <unistd.h>
 # include <arpa/inet.h>
+# include <sstream>
+# include <limits.h>
+# include <string>
 # include <cstring>
 # include <fcntl.h>
+# include <exception>
 # include "IRCClient.hpp"
 # include "CommandBuilder.hpp"
 # include "IRCChannel.hpp"
+# include "Command.hpp"
 
+# define HOST_NAME_MAX 255
 class IRCClient;
 class IRCChannel;
 
@@ -24,7 +30,8 @@ enum	ErrorCode
 	ERR_SETUP,
 	ERR_POLL,
 	ERR_FCNTL,
-	ERR_SEND
+	ERR_SEND,
+	ERR_NOSUCHCLIENTFD
 };
 
 typedef std::map<std::string, IRCChannel*>::iterator ChannelIterator;
@@ -38,7 +45,6 @@ private:
 	ErrorCode							serverSetup();
 	void								clientAccept();
 	void								clientHandle(IRCClient* client);
-	void								clientRemove(int clientFd);
 	int									serverFd;
 	struct sockaddr_in					serverAddr;
 	std::vector<struct pollfd>			pollFds;
@@ -49,6 +55,7 @@ public:
 	~IRCServer();
 	ErrorCode							Run();
 	ErrorCode							err;
+	void								clientRemove(int clientFd);
 	void								clientSendData(int clientFd, const std::string& data);
 	void								removeChannel(const std::string& channelName);
 	void								addChannel(IRCChannel* channel);
@@ -56,6 +63,22 @@ public:
 	IRCClient*							GetClientByNickname(const std::string& nickname);
 	char*								GetPassword();
 	bool								isNicknameInUse(const std::string& nickname);
+	void								erasePollFd(int clientFd);
+	void 								serverShutdown();
+	std::string 						GetPortName();
+	std::string 						retriveHostName();
+	std::map<int, IRCClient*> 			GetClients();
 };
 
+
+class ServerException : public std::exception {
+    private:
+    const char *m_message;
+
+    public:
+    ServerException(const char* message) : m_message(message) {}
+    virtual const char* what() const throw() {
+        return m_message;
+    }
+};
 #endif

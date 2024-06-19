@@ -1,5 +1,7 @@
 #include "Command.hpp"
 
+Command::Command(){}
+
 Command::Command(const std::string& name, AuthLevel level, std::function<void(IRCClient*, const std::vector<std::string>&)> func)
 				: name(name), minAuthLevel(level), function(func) {}
 Command::~Command() { return ; }

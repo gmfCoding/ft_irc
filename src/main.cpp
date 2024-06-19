@@ -3,11 +3,10 @@
 #include <csignal>
 
 
-
+/*
 void displayWelcomeMessage()
 {
-    std::string welcomeMessage = "\033[1;31m" // Set text color to red
-    R"(
+    std::string welcomeMessage = "\033[1;31m" R"(
   _______   ______         _   _____       _____ 
  |  _____| |__  __|       | | |  __  \   /   _   \
  | |____      | |         | | | |_ / /  /  /   \__\
@@ -18,6 +17,7 @@ void displayWelcomeMessage()
     )" "\033[0m";
     std::cout << welcomeMessage << std::endl;
 }
+*/
 
 void handleCtrlC(int sig)
 {
@@ -30,7 +30,7 @@ void handleCtrlC(int sig)
 
 int main(int argc, char **argv)
 {
-    displayWelcomeMessage();
+    //displayWelcomeMessage();
     if (argc != 3)
         return (1);
     signal(SIGINT, handleCtrlC);
