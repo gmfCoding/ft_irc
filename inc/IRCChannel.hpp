@@ -55,6 +55,7 @@ public:
 	bool						isMember(IRCClient* client) const;
 	void                        channelShutDown();
 	bool						isInviteOnly() const;
+	std::set<IRCClient*>		GetMembers() const;
 
 //VVis not mandatoryVV
 	bool						isBanned(IRCClient* client) const;

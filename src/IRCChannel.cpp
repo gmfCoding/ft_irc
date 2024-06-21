@@ -85,3 +85,4 @@ bool IRCChannel::isBanned(IRCClient* client) const { return bannedClients.find(c
 void IRCChannel::banClient(IRCClient* client) { bannedClients.insert(client); }
 void IRCChannel::unbanClient(IRCClient* client) { bannedClients.erase(client); }
 bool IRCChannel::canSendMessage(IRCClient* client) const { return (true); }
+std::set<IRCClient*> IRCChannel::GetMembers() const { return members;}

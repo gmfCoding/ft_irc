@@ -74,4 +74,4 @@ void IRCClient::authenticate()
 }
 
 //void			IRCClient::SetCurrentChannel(IRCChannel* channel) { currentChannel = channel; }
-//IRCChannel*		IRCClient::GetCurrentChannel() const { return currentChannel; }
+IRCChannel*		IRCClient::GetCurrentChannel() const { return currentChannel; }

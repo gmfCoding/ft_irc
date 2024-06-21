@@ -31,7 +31,7 @@ protected:
 	std::string buffer;
 	std::string hostname;
 	IRCServer*	server;
-	//IRCChannel*	currentChannel;
+	IRCChannel*	currentChannel;
 	std::set<IRCChannel*> channelsIn;
 	bool Auth[AUTH_STATUS_COUNT];
 
@@ -68,6 +68,7 @@ public:
 	void			removeChannel(IRCChannel* channel);
 	void			addChannel(IRCChannel* channel);
 	std::set<IRCChannel*>	GetChannels() const;
+	IRCChannel* 	GetCurrentChannel() const;
 };
 
 
