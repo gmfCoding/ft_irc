@@ -21,7 +21,7 @@ enum AuthStatus
 
 class IRCClient
 {
-private:
+protected:
 	int			fd;
 	AuthLevel	authLevel;
 	std::string	ipAddr;
