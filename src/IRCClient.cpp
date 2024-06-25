@@ -43,10 +43,6 @@ bool			IRCClient::isMarkedForDeletion() const { return markedForDeletion; }
 std::set<IRCChannel*>	IRCClient::GetChannels() const { return channelsIn; }
 void			IRCClient::SetData(const std::string& data)
 {
-    if (this == NULL) {
-        std::cerr << "ERROR: Attempt to access a null client in SetData" << std::endl;
-        return;
-    }
 	buffer = data;
 }
 
