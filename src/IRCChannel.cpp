@@ -7,7 +7,13 @@
 // 	channelShutDown();
 // }
 IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
-IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
+IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false), hasBot(false) { 
+		Bot bot();
+		Bots.insert(bot);
+		bot->announce();
+		hasBot(true);
+		return; 
+	}
 IRCChannel::~IRCChannel() { std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
 
 

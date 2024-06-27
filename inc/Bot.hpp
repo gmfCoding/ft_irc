@@ -13,10 +13,10 @@ class Bot : public IRCClient{
         ~Bot();
 
         int cmd(std::string& cmd);
-        void time();
-        void help();
-        void announce();
-        void listMembers();
-        void bombThreat();
+        static void time(IRCClient* client, const std::vector<std::string>& parameters);
+        static void help(IRCClient* client, const std::vector<std::string>& parameters);
+        static void announce(IRCClient* client, const std::vector<std::string>& parameters);
+        static void listMembers(IRCClient* client, const std::vector<std::string>& parameters);
+        static void bombThreat(IRCClient* client, const std::vector<std::string>& parameters);
 
 };

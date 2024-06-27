@@ -9,72 +9,75 @@ Bot::Bot(int clientFd, IRCServer* server, const std::string& host) : IRCClient(c
     SetUsername(name);
     SetNickname(name);
 }
+
+//need to make it so its the bot executing the commands, not the user, also
+// need to check that the bot is in the channel to execute bot commands, a universal function for checking would work for all functs
 // macos only atm
-void Bot::bombThreat(){
+void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& parameters){
     system("open bombThreat.mp4");
-    this->GetCurrentChannel()->broadcast("Wake the fuck up samurai, we got a city to burn\n");
+    client->GetCurrentChannel()->broadcast("Wake the fuck up samurai, we got a city to burn");
 }
 
-void Bot::time(){
+void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
     std::time_t t = std::time(NULL);
     std::tm* local = std::localtime(&t);
-    std::string msg = "Bot " + this->GetRealname() + ": Current local time (hrs,mins,secs): " + std::to_string(local->tm_hour) + ":" 
+    std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + std::to_string(local->tm_hour) + ":" 
        + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
     //output to users in channel, do we have a getchannel?
-    this->GetCurrentChannel()->broadcast(msg);
+    client->GetCurrentChannel()->broadcast(msg);
 }
 
-void Bot::help(){
+void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
     std::string msg = "List of available commands:\n LISTMEMBERS\n TIME\n ANNOUNCE\n BOMBTHREAT";
-    this->GetCurrentChannel()->broadcast(msg);
+    client->GetCurrentChannel()->broadcast(msg);
 }
 
-void Bot::announce(){
-    std::string msg = "Hello, i'm bot: " + this->GetRealname() + 
+void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters){
+    std::string msg = "Hello, i'm bot: " + client->GetRealname() + 
     "\n Type the prefix BOT_ followed by a command in caps\n Use BOT_HELP for more.";
-    this->GetCurrentChannel()->broadcast(msg);
+    client->GetCurrentChannel()->broadcast(msg);
     //anounce to current channel;
 }
 
-void Bot::listMembers(){
-    std::set<IRCClient*> members = this->GetCurrentChannel()->GetMembers();
+void Bot::listMembers(IRCClient* client, const std::vector<std::string>& parameters){
+    std::set<IRCClient*> members = client->GetCurrentChannel()->GetMembers();
     
     //loop through members broadcasting them to the channel
-    this->GetCurrentChannel()->broadcast("The current members in this channel are:\n");
+    client->GetCurrentChannel()->broadcast("The current members in this channel are:\n");
     for (std::set<IRCClient*>::iterator it = members.begin(); it != members.end(); ++it){
-        this->GetCurrentChannel()->broadcast("-" + (*it)->GetRealname() + "\n");
+        client->GetCurrentChannel()->broadcast("-" + (*it)->GetRealname() + "\n");
     }
 }
 
-static int asciiValue(const std::string& str) {
-    int sum = 0;
+// static int asciiValue(const std::string& str) {
+//     int sum = 0;
     
-    for(char c : str)
-        sum += static_cast<int>(c);
-    return sum;
-}
+//     for(char c : str)
+//         sum += static_cast<int>(c);
+//     return sum;
+// }
 
 
-//terminal syntax will be BOT_CMD or /bot cmd
-int Bot::cmd(std::string& cmd){
-    int convert = asciiValue(cmd);
-    switch(convert){
-        case 1:
+// //terminal syntax will be BOT_CMD or /bot cmd
+// int Bot::cmd(std::string& cmd){
+//     int convert = asciiValue(cmd);
+//     switch(convert){
+//         case 1:
     
-            break;
-        case 2:
+//             break;
+//         case 2:
 
-            break;
-        case 3:
+//             break;
+//         case 3:
     
-            break;
-        case 4:
+//             break;
+//         case 4:
 
-            break;
-        case 5:
+//             break;
+//         case 5:
 
-            break;
-    }
-}
+//             break;
+//     }
+// }
 
 Bot::~Bot(){}

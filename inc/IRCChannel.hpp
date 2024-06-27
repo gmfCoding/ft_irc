@@ -16,12 +16,14 @@ private:
 	std::string						name;
 	std::string						key;
 	std::string						topic;
+	std::set<Bot*>					Bots;
 	std::set<IRCClient*>			members;
 	std::set<IRCClient*>			operators;
 	std::set<IRCClient*>			invited;
 	std::set<IRCClient*>			bannedClients;
 	bool							inviteOnly;
 	bool							topicRestricted;
+	bool							hasBot;
 	int								userLimit;
 
 public:

@@ -6,6 +6,7 @@
 # include "AuthLevel.hpp"
 # include "IRCClient.hpp"
 # include "CommandMode.hpp"
+# include "Bot.hpp"
 
 
 //class IRCServer;

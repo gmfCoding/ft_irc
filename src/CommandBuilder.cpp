@@ -62,6 +62,11 @@ void CommandBuilder::initializeCommands()
 	availableCommands.push_back(Command("INVITE", AuthUser, Command::handleInviteCommand));
 	availableCommands.push_back(Command("KICK", AuthUser, Command::handleKickCommand));
 	availableCommands.push_back(Command("PART", AuthUser, Command::handlePartCommand));
+	availableCommands.push_back(Command("BOT_HELP", AuthPublic, Bot::help));
+	availableCommands.push_back(Command("BOT_LISTMEMBERS", AuthPublic, Bot::listMembers));
+	availableCommands.push_back(Command("BOT_TIME", AuthPublic, Bot::time));
+	availableCommands.push_back(Command("BOT_ANNOUNCE", AuthPublic, Bot::announce));
+	availableCommands.push_back(Command("BOT_BOMBTHREAT", AuthPublic, Bot::bombThreat));
 }
 
 
