@@ -10,6 +10,24 @@ Bot::Bot(int clientFd, IRCServer* server, const std::string& host) : IRCClient(c
     SetNickname(name);
 }
 
+Bot::Bot() : IRCClient(NULL, NULL, NULL){
+	this->authLevel = AuthBot;
+	for (int i = 0; i < AUTH_STATUS_COUNT; ++i)
+		Auth[i] = false;
+    std::string name = "Bot_Gear";
+    SetRealname(name);
+    SetUsername(name);
+    SetNickname(name);
+}
+
+Bot* Bot::addbot(IRCChannel* chan){
+	Bot* bot = new Bot();
+	std::vector<std::string> vec = {"Hello","Test"};
+	const std::vector<std::string>& test = vec;
+	bot->announce(bot, test);
+	chan->botTrue();
+	return bot;
+}
 //need to make it so its the bot executing the commands, not the user, also
 // need to check that the bot is in the channel to execute bot commands, a universal function for checking would work for all functs
 // macos only atm

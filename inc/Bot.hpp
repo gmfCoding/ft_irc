@@ -10,9 +10,11 @@ class Bot : public IRCClient{
 
     public:
         Bot(int clientFd, IRCServer* server, const std::string& host);
+		Bot();
         ~Bot();
 
-        int cmd(std::string& cmd);
+		static Bot* addbot(IRCChannel* chan);
+        int 		cmd(std::string& cmd);
         static void time(IRCClient* client, const std::vector<std::string>& parameters);
         static void help(IRCClient* client, const std::vector<std::string>& parameters);
         static void announce(IRCClient* client, const std::vector<std::string>& parameters);

@@ -38,6 +38,8 @@ public:
 	const std::string&			GetTopic() const;
 	std::string					GetMemberList() const;
 	void						SetUserLimit(int limit);
+	void						botTrue();
+	void						botFalse();
 	void						SetTopic(const std::string& newTopic);
 	void						SetTopicRestricted(bool set);
 	void						SetInviteOnly(bool set);

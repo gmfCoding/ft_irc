@@ -8,12 +8,13 @@
 // }
 IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false), hasBot(false) { 
-		Bot bot();
-		Bots.insert(bot);
-		bot->announce();
-		hasBot(true);
-		return; 
-	}
+
+	Bot* bot = Bot::addbot(this);
+	Bots.insert(bot);
+	if (bot != NULL)
+		hasBot = true;
+	return;
+}
 IRCChannel::~IRCChannel() { std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
 
 
@@ -40,6 +41,8 @@ bool						IRCChannel::isOperator(IRCClient* client) const { return (operators.fi
 bool						IRCChannel::isMember(IRCClient* client) const { return (members.find(client) != members.end()); }
 bool						IRCChannel::isInviteOnly() const { return inviteOnly; }
 bool						IRCChannel::isInvited(IRCClient* client) const { return (invited.find(client) != invited.end()); }
+void						IRCChannel::botTrue(){hasBot = true; return;}
+void						IRCChannel::botFalse(){hasBot = false; return;}
 
 void IRCChannel::broadcast(const std::string& message)
 {
