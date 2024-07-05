@@ -39,9 +39,20 @@ Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
 // need to check that the bot is in the channel to execute bot commands, a universal function for checking would work for all functs
 // macos only atm
 void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& parameters){
-    system("open bombThreat.mp4");
+    
+	std::set<IRCChannel*> channels = client->GetChannels();
+	std::set<IRCChannel*>::iterator it = channels.begin();
+	IRCChannel* channel = *it;
+	client = channel->returnBot();
+	system("open bombThreat.mp4");
 	//error below
-	client->GetServer()->clientSendData(client->GetFd(), "Wake the fuck up samurai, we got a city to burn");
+	std::string msg = "Wake the fuck up samurai, we got a city to burn";
+	std::vector<std::string> vec;
+	//make varible dynamic
+	vec.push_back("tpawson");
+	vec.push_back(msg);
+	const std::vector<std::string>& test = vec;
+	Command::handlePrivmsgCommand(client, test);
 }
 
 void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
