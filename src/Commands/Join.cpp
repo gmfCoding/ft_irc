@@ -24,9 +24,12 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 		IRCChannel* channel = client->GetServer()->GetChannel(channelName);
 		if (!channel)
 		{
+			//error in chan creation
 			channel = new IRCChannel(channelName);
 			client->GetServer()->addChannel(channel);
 			channel->addOperator(client);
+			channel->ChAddBot(client);
+
 		}
 		if (channel->isInviteOnly() && !channel->isInvited(client))
 		{

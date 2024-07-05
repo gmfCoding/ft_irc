@@ -31,11 +31,13 @@ public:
 	IRCChannel();
 	IRCChannel(const std::string& channelName);
 	~IRCChannel();
+	void						ChAddBot(IRCClient *client);
 	void						broadcast(const std::string& message);
 	void						broadcast(const std::string& message, int fd);
 	int							GetUserLimit();
 	std::set<IRCClient*>		GetMembers() const;
 	IRCClient* 					GetMember() const;
+	IRCClient*					returnBot() const;
 	const std::string&			GetName() const;
 	const std::string&			GetKey() const;
 	const std::string&			GetTopic() const;

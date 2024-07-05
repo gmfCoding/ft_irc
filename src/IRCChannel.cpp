@@ -9,25 +9,35 @@
 // }
 IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false), hasBot(false) { 
-
-	IRCClient *member = GetMember();
-	IRCServer *server = member->GetServer();
-	 std::cerr << "Bot creation failed: bot is NULL" << std::endl;
-	int fd = member->GetFd();
-	Bot* bot = Bot::addbot(this, server, fd);
+	//error below
+	//std::cerr << "Bot creation failed: bot is NULL" << std::endl;
+	 return;
+}
+void	IRCChannel::ChAddBot(IRCClient *client)
+{
+	Bot* bot = Bot::addbot(this, client->GetServer(), client->GetFd());
 	if (bot == NULL)
 		 std::cerr << "Bot creation failed: bot is NULL" << std::endl;
 	try {
-    members.insert(bot);
     std::cerr << "Bot inserted into members successfully" << std::endl;
 	} 
 	catch (const std::exception& e) {
     std::cerr << "Exception while inserting bot into members: " << e.what() << std::endl;
 	}
+    members.insert(bot);
 	if (bot != NULL)
 	 	hasBot = true;
-	 return;
 }
+
+IRCClient* IRCChannel::returnBot() const {
+	std::set<IRCClient*> members = GetMembers();
+	for (MemberIterator it = members.begin(); it != members.end(); ++it){
+		if ((*it)->GetUsername() == "Bot_Gear")
+			return *it;
+	}
+	return nullptr;
+}
+
 IRCChannel::~IRCChannel() { std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
 
 std::set<IRCClient*> IRCChannel::GetMembers() const { return members;}

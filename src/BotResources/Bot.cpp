@@ -31,17 +31,6 @@ Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
         std::cerr << "Error: Failed to allocate memory for Bot in Bot::addbot" << std::endl;
         return nullptr;
     }
-	std::vector<std::string> vec;
-	vec.push_back("");
-	const std::vector<std::string>& test = vec;
-
-  	try {
-        bot->announce(bot, vec);
-    } catch (const std::exception& e) {
-        std::cerr << "Exception caught in Bot::addbot: " << e.what() << std::endl;
-        delete bot;
-        return nullptr;
-    }
 	//bot->announce(bot, test);
 	chan->botTrue();
 	return bot;
@@ -51,7 +40,8 @@ Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
 // macos only atm
 void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& parameters){
     system("open bombThreat.mp4");
-    client->GetCurrentChannel()->broadcast("Wake the fuck up samurai, we got a city to burn");
+	//error below
+	client->GetServer()->clientSendData(client->GetFd(), "Wake the fuck up samurai, we got a city to burn");
 }
 
 void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
@@ -59,8 +49,7 @@ void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
     std::tm* local = std::localtime(&t);
     std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + std::to_string(local->tm_hour) + ":" 
        + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
-    //output to users in channel, do we have a getchannel?
-    client->GetCurrentChannel()->broadcast(msg);
+    client->GetServer()->clientSendData(client->GetFd(), msg);
 }
 
 void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
@@ -69,19 +58,25 @@ void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
 }
 
 void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters) {
-    if (client == nullptr) {
+    std::set<IRCChannel*> channels = client->GetChannels();
+	std::set<IRCChannel*>::iterator it = channels.begin();
+	IRCChannel* channel = *it;
+	client = channel->returnBot();
+	//client->GetMembers();
+	if (client == nullptr) {
         std::cerr << "Error in Bot::announce: IRCClient pointer is null" << std::endl;
         return;
     }
-    IRCChannel* currentChannel = client->GetCurrentChannel();
-    if (currentChannel == nullptr) {
-        std::cerr << "Error in Bot::announce: Current channel pointer is null" << std::endl;
-        return;
-    }
-    std::string msg = "Hello, I'm bot: " + client->GetRealname() + 
-                      "\nType the prefix BOT_ followed by a command in caps\nUse BOT_HELP for more.";
+    std::string msg = "Hello, I'm Bot_Gear, Type the prefix BOT_ followed by a command in caps, Use BOT_HELP for more.";
 
-    currentChannel->broadcast(msg);
+	//client->GetServer()->clientSendData(client->GetFd(), RPL_WELCOME(client->GetNickname()));
+	//client->GetServer()->clientSendData(client->GetFd(), msg);
+	//parameters.push_back()
+	std::vector<std::string> vec;
+	vec.push_back("tpawson");
+	vec.push_back(msg);
+	const std::vector<std::string>& test = vec;
+	Command::handlePrivmsgCommand(client, test);
 }
 
 void Bot::listMembers(IRCClient* client, const std::vector<std::string>& parameters){
