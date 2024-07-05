@@ -10,7 +10,7 @@ Bot::Bot(int clientFd, IRCServer* server, const std::string& host) : IRCClient(c
     SetNickname(name);
 }
 
-Bot::Bot() : IRCClient(NULL, NULL, NULL){
+Bot::Bot() : IRCClient(0, NULL, NULL){
 	this->authLevel = AuthBot;
 	for (int i = 0; i < AUTH_STATUS_COUNT; ++i)
 		Auth[i] = false;
@@ -20,11 +20,29 @@ Bot::Bot() : IRCClient(NULL, NULL, NULL){
     SetNickname(name);
 }
 
-Bot* Bot::addbot(IRCChannel* chan){
-	Bot* bot = new Bot();
-	std::vector<std::string> vec = {"Hello","Test"};
+Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
+	if (chan == nullptr){
+		std::cerr << "Error: IRCChannel pointer is null in Bot::addbot" << std::endl;
+        return nullptr;
+	}
+
+	Bot* bot = new Bot(fd, server, "host");
+	if (bot == nullptr) {
+        std::cerr << "Error: Failed to allocate memory for Bot in Bot::addbot" << std::endl;
+        return nullptr;
+    }
+	std::vector<std::string> vec;
+	vec.push_back("");
 	const std::vector<std::string>& test = vec;
-	bot->announce(bot, test);
+
+  	try {
+        bot->announce(bot, vec);
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught in Bot::addbot: " << e.what() << std::endl;
+        delete bot;
+        return nullptr;
+    }
+	//bot->announce(bot, test);
 	chan->botTrue();
 	return bot;
 }
@@ -50,11 +68,20 @@ void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
     client->GetCurrentChannel()->broadcast(msg);
 }
 
-void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters){
-    std::string msg = "Hello, i'm bot: " + client->GetRealname() + 
-    "\n Type the prefix BOT_ followed by a command in caps\n Use BOT_HELP for more.";
-    client->GetCurrentChannel()->broadcast(msg);
-    //anounce to current channel;
+void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters) {
+    if (client == nullptr) {
+        std::cerr << "Error in Bot::announce: IRCClient pointer is null" << std::endl;
+        return;
+    }
+    IRCChannel* currentChannel = client->GetCurrentChannel();
+    if (currentChannel == nullptr) {
+        std::cerr << "Error in Bot::announce: Current channel pointer is null" << std::endl;
+        return;
+    }
+    std::string msg = "Hello, I'm bot: " + client->GetRealname() + 
+                      "\nType the prefix BOT_ followed by a command in caps\nUse BOT_HELP for more.";
+
+    currentChannel->broadcast(msg);
 }
 
 void Bot::listMembers(IRCClient* client, const std::vector<std::string>& parameters){

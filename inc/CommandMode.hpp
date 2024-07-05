@@ -2,9 +2,6 @@
 # define COMMANDMODE_HPP
 
 # include "Command.hpp"
-# include "IRCClient.hpp"
-# include "IRCChannel.hpp"
-# include "IRCServer.hpp"
 # include <functional>
 # include <map>
 # include <vector>

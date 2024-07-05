@@ -1,4 +1,5 @@
 #include "IRCChannel.hpp"
+#include "Bot.hpp"
 
 
 // IRCChannel::IRCChannel() { return ; }
@@ -9,14 +10,36 @@
 IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
 IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false), hasBot(false) { 
 
-	Bot* bot = Bot::addbot(this);
-	Bots.insert(bot);
+	IRCClient *member = GetMember();
+	IRCServer *server = member->GetServer();
+	 std::cerr << "Bot creation failed: bot is NULL" << std::endl;
+	int fd = member->GetFd();
+	Bot* bot = Bot::addbot(this, server, fd);
+	if (bot == NULL)
+		 std::cerr << "Bot creation failed: bot is NULL" << std::endl;
+	try {
+    members.insert(bot);
+    std::cerr << "Bot inserted into members successfully" << std::endl;
+	} 
+	catch (const std::exception& e) {
+    std::cerr << "Exception while inserting bot into members: " << e.what() << std::endl;
+	}
 	if (bot != NULL)
-		hasBot = true;
-	return;
+	 	hasBot = true;
+	 return;
 }
 IRCChannel::~IRCChannel() { std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
 
+std::set<IRCClient*> IRCChannel::GetMembers() const { return members;}
+
+IRCClient* IRCChannel::GetMember() const {
+	std::set<IRCClient*> members = GetMembers();
+	if (!members.empty()){
+		return *(members.begin());
+	}
+	else
+		return nullptr;
+}
 
 int							IRCChannel::GetUserLimit() { return (userLimit); }
 const std::string&			IRCChannel::GetName() const { return (name); }
@@ -94,4 +117,3 @@ bool IRCChannel::isBanned(IRCClient* client) const { return bannedClients.find(c
 void IRCChannel::banClient(IRCClient* client) { bannedClients.insert(client); }
 void IRCChannel::unbanClient(IRCClient* client) { bannedClients.erase(client); }
 bool IRCChannel::canSendMessage(IRCClient* client) const { return (true); }
-std::set<IRCClient*> IRCChannel::GetMembers() const { return members;}

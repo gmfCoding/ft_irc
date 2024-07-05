@@ -1,4 +1,5 @@
 #include "CommandBuilder.hpp"
+#include "Bot.hpp"
 
 CommandBuilder::CommandBuilder(IRCServer* server) : server(server)
 {

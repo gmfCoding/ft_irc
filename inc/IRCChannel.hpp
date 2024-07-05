@@ -3,10 +3,11 @@
 
 # include <string>
 # include <set>
-# include "IRCClient.hpp"
 # include "Command.hpp"
+//# include "Bot.hpp"
 
 class IRCClient;
+//class Bot;
 
 typedef std::set<IRCClient*>::const_iterator MemberIterator;
 
@@ -16,7 +17,7 @@ private:
 	std::string						name;
 	std::string						key;
 	std::string						topic;
-	std::set<Bot*>					Bots;
+	//std::set<Bot*>					Bots;
 	std::set<IRCClient*>			members;
 	std::set<IRCClient*>			operators;
 	std::set<IRCClient*>			invited;
@@ -33,6 +34,8 @@ public:
 	void						broadcast(const std::string& message);
 	void						broadcast(const std::string& message, int fd);
 	int							GetUserLimit();
+	std::set<IRCClient*>		GetMembers() const;
+	IRCClient* 					GetMember() const;
 	const std::string&			GetName() const;
 	const std::string&			GetKey() const;
 	const std::string&			GetTopic() const;
@@ -59,7 +62,6 @@ public:
 	bool						isMember(IRCClient* client) const;
 	void                        channelShutDown();
 	bool						isInviteOnly() const;
-	std::set<IRCClient*>		GetMembers() const;
 
 //VVis not mandatoryVV
 	bool						isBanned(IRCClient* client) const;

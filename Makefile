@@ -4,6 +4,7 @@ SRCSF = $(TEST) \
 		IRCChannel.cpp \
 		CommandBuilder.cpp \
 		Command.cpp \
+		BotResources/Bot.cpp \
 		Commands/Invite.cpp \
 		Commands/Join.cpp \
 		Commands/Kick.cpp \
@@ -14,7 +15,7 @@ SRCSF = $(TEST) \
 		Commands/Privmsg.cpp \
 		Commands/Quit.cpp \
 		Commands/Topic.cpp \
-		Commands/User.cpp 
+		Commands/User.cpp
 
 INCSF = IRCServer.hpp \
 		IRCClient.hpp \
@@ -24,7 +25,8 @@ INCSF = IRCServer.hpp \
 		Command.hpp \
 		CommandMode.hpp \
 		AuthLevel.hpp \
-		GlobalVariables.hpp
+		GlobalVariables.hpp \
+		Bot.hpp
 
 ifndef $(TEST)
 TEST=main.cpp

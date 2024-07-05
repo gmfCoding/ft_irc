@@ -15,15 +15,14 @@
 # include <cstring>
 # include <fcntl.h>
 # include <exception>
-# include "IRCClient.hpp"
 # include "CommandBuilder.hpp"
-# include "IRCChannel.hpp"
 # include "Command.hpp"
-# include "Bot.hpp"
+
 
 #ifndef HOST_NAME_MAX
 # define HOST_NAME_MAX 255
 #endif
+//class Bot;
 class IRCClient;
 class IRCChannel;
 

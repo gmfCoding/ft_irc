@@ -6,13 +6,16 @@
 # include "AuthLevel.hpp"
 # include "IRCClient.hpp"
 # include "CommandMode.hpp"
-# include "Bot.hpp"
+# include "IRCClient.hpp"
+# include "IRCChannel.hpp"
+# include "IRCServer.hpp"
+//# include "Bot.hpp"
 
-
-//class IRCServer;
+class IRCServer;
 class IRCClient;
 class IRCChannel;
 class CommandMode;
+//class Bot;
 
 
 class Command
