@@ -25,10 +25,18 @@ void	IRCChannel::ChAddBot(IRCClient *client)
     std::cerr << "Exception while inserting bot into members: " << e.what() << std::endl;
 	}
     members.insert(bot);
-	
 	if (bot != NULL)
 	 	hasBot = true;
 }
+
+void	IRCChannel::activateAnnounce(IRCClient *client){
+	std::string msg = "";
+	std::vector<std::string> vec;
+	vec.push_back(msg);
+	const std::vector<std::string>& test = vec;
+	Bot::announce(client, test);
+}
+
 
 IRCClient* IRCChannel::returnBot() const {
 	std::set<IRCClient*> members = GetMembers();

@@ -30,7 +30,6 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 			channel->ChAddBot(client);
 			if (channel->returnBot())
 				channel->botTrue();
-			//channel->returnBot()->announce()
 		}
 		if (channel->isInviteOnly() && !channel->isInvited(client))
 		{
@@ -60,5 +59,6 @@ void Command::handleJoinCommand(IRCClient* client, const std::vector<std::string
 			client->GetServer()->clientSendData(client->GetFd(), RPL_NOTOPIC(client->GetNickname(), channelName));
 		client->GetServer()->clientSendData(client->GetFd(), RPL_NAMREPLY(client->GetNickname(), channelName, channel->GetMemberList()));
 		client->GetServer()->clientSendData(client->GetFd(), RPL_ENDOFNAMES(client->GetNickname(), channelName));
+		channel->activateAnnounce(client);
 	}
 }

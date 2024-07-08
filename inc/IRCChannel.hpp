@@ -31,6 +31,7 @@ public:
 	IRCChannel(const std::string& channelName);
 	~IRCChannel();
 	void						ChAddBot(IRCClient *client);
+	void						activateAnnounce(IRCClient *client);
 	void						broadcast(const std::string& message);
 	void						broadcast(const std::string& message, int fd);
 	int							GetUserLimit();

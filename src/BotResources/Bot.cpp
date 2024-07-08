@@ -105,7 +105,6 @@ void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters
 	IRCChannel* channel = *it;
 	client = channel->returnBot();
     std::string msg = "Hello, I'm Bot_Gear, Type the prefix BOT_ followed by a command in caps, Use BOT_HELP for more.";
-	//client->GetServer()->clientSendData(client->GetFd(), msg);
 
 	std::vector<std::string> vec;
 	vec.push_back(name);
