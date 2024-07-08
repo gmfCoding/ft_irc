@@ -47,7 +47,10 @@ void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& paramete
         std::cerr << "Error, No Bot in Channel" << std::endl;
         return;
     }
-	system("open bombThreat.mp4");
+	if(system("open bombThreat.mp4") == -1){
+		std::cerr << "Error, No Video Found" << std::endl;
+        return;
+	}
 	std::string msg = "Wake the fuck up samurai, we got a city to burn";
 	std::vector<std::string> vec;
 	
