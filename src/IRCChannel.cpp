@@ -47,7 +47,10 @@ IRCClient* IRCChannel::returnBot() const {
 	return nullptr;
 }
 
-IRCChannel::~IRCChannel() { std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; }
+IRCChannel::~IRCChannel() { 
+	std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; 
+		delete returnBot();
+	}
 
 std::set<IRCClient*> IRCChannel::GetMembers() const { return members;}
 
@@ -77,6 +80,7 @@ void						IRCChannel::removeUserLimit() { userLimit = 0; }
 void						IRCChannel::removeKey() { key.clear(); }
 void						IRCChannel::inviteClient(IRCClient* client) { invited.insert(client); }
 bool						IRCChannel::hasKey() const { return (!key.empty()); }
+bool						IRCChannel::hasBotBool() { return hasBot;}
 bool						IRCChannel::isTopicRestricted() const { return (topicRestricted); }
 bool						IRCChannel::isFull() const { return (members.size() >= userLimit); }
 bool						IRCChannel::isOperator(IRCClient* client) const { return (operators.find(client) != operators.end()); }

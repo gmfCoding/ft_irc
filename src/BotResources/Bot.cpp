@@ -39,14 +39,14 @@ Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
 // macos only atm
 void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& parameters){
     std::string name = client->GetNickname();
-	if (client == nullptr){
-        std::cerr << "Error, No Bot in Channel" << std::endl;
-        return;
-    }
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
 	client = channel->returnBot();
+	if (client == nullptr){
+        std::cerr << "Error, No Bot in Channel" << std::endl;
+        return;
+    }
 	system("open bombThreat.mp4");
 	std::string msg = "Wake the fuck up samurai, we got a city to burn";
 	std::vector<std::string> vec;
@@ -62,6 +62,10 @@ void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
+	if (!channel->hasBotBool()){
+		std::cerr << "Error, No Bot in Channel" << std::endl;
+        return;
+	}
 	client = channel->returnBot();
 	std::time_t t = std::time(NULL);
     std::tm* local = std::localtime(&t);
@@ -76,13 +80,13 @@ void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
 
 void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
 	std::string name = client->GetNickname();
-	if (client == nullptr){
-        std::cerr << "Error, No Bot in Channel" << std::endl;
-        return;
-    }
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
+	if (!channel->hasBotBool()){
+		std::cerr << "Error, No Bot in Channel" << std::endl;
+        return;
+	}
 	client = channel->returnBot();
 	
 	std::string msg = "List of available commands: LISTMEMBERS, TIME, ANNOUNCE, BOMBTHREAT";
@@ -96,13 +100,13 @@ void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
 
 void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters) {
     std::string name = client->GetNickname();
-	if (client == nullptr){
-        std::cerr << "Error, No Bot in Channel" << std::endl;
-        return;
-    }
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
+	if (!channel->hasBotBool()){
+		std::cerr << "Error, No Bot in Channel" << std::endl;
+        return;
+	}
 	client = channel->returnBot();
     std::string msg = "Hello, I'm Bot_Gear, Type the prefix BOT_ followed by a command in caps, Use BOT_HELP for more.";
 
@@ -117,6 +121,10 @@ void Bot::listMembers(IRCClient* client, const std::vector<std::string>& paramet
     std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
+	if (!channel->hasBotBool()){
+		std::cerr << "Error, No Bot in Channel" << std::endl;
+        return;
+	}
 	std::set<IRCClient*> members = channel->GetMembers();
 	std::string name = client->GetNickname();
 	client = channel->returnBot();

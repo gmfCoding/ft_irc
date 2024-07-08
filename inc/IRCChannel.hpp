@@ -16,7 +16,6 @@ private:
 	std::string						name;
 	std::string						key;
 	std::string						topic;
-	//std::set<Bot*>					Bots;
 	std::set<IRCClient*>			members;
 	std::set<IRCClient*>			operators;
 	std::set<IRCClient*>			invited;
@@ -37,12 +36,13 @@ public:
 	int							GetUserLimit();
 	std::set<IRCClient*>		GetMembers() const;
 	IRCClient* 					GetMember() const;
-	IRCClient*						returnBot() const;
+	IRCClient*					returnBot() const;
 	const std::string&			GetName() const;
 	const std::string&			GetKey() const;
 	const std::string&			GetTopic() const;
 	std::string					GetMemberList() const;
 	void						SetUserLimit(int limit);
+	bool						hasBotBool();
 	void						botTrue();
 	void						botFalse();
 	void						SetTopic(const std::string& newTopic);
