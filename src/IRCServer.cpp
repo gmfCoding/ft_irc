@@ -202,7 +202,6 @@ void	IRCServer::clientAccept()
     clientPollFd.events = POLLIN;
     clientPollFd.revents = 0;
 	std::string host = retriveHostName();
-	//std::cout << "ASDASDASD  " << host << std::endl;
 	pollFds.push_back((struct pollfd){clientFd, POLLIN, 0});
 	clients[clientFd] = new IRCClient(clientFd, this, host);
 	std::cout << "\033[1;32m" << "accepted client connection, FD: " << "\033[0m" << clientFd << std::endl;

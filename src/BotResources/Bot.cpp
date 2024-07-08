@@ -21,17 +21,16 @@ Bot::Bot() : IRCClient(0, NULL, NULL){
 }
 
 Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
+	
 	if (chan == nullptr){
 		std::cerr << "Error: IRCChannel pointer is null in Bot::addbot" << std::endl;
         return nullptr;
 	}
-
 	Bot* bot = new Bot(fd, server, "host");
 	if (bot == nullptr) {
         std::cerr << "Error: Failed to allocate memory for Bot in Bot::addbot" << std::endl;
         return nullptr;
     }
-	//bot->announce(bot, test);
 	chan->botTrue();
 	return bot;
 }
@@ -39,96 +38,100 @@ Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
 // need to check that the bot is in the channel to execute bot commands, a universal function for checking would work for all functs
 // macos only atm
 void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& parameters){
-    
+    std::string name = client->GetNickname();
+	if (client == nullptr){
+        std::cerr << "Error, No Bot in Channel" << std::endl;
+        return;
+    }
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
 	client = channel->returnBot();
 	system("open bombThreat.mp4");
-	//error below
 	std::string msg = "Wake the fuck up samurai, we got a city to burn";
 	std::vector<std::string> vec;
-	//make varible dynamic
-	vec.push_back("tpawson");
+	
+	vec.push_back(name);
 	vec.push_back(msg);
 	const std::vector<std::string>& test = vec;
 	Command::handlePrivmsgCommand(client, test);
 }
 
 void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
-    std::time_t t = std::time(NULL);
-    std::tm* local = std::localtime(&t);
-    std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + std::to_string(local->tm_hour) + ":" 
-       + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
-    client->GetServer()->clientSendData(client->GetFd(), msg);
-}
-
-void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
-    std::string msg = "List of available commands:\n LISTMEMBERS\n TIME\n ANNOUNCE\n BOMBTHREAT";
-    client->GetCurrentChannel()->broadcast(msg);
-}
-
-void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters) {
-    std::set<IRCChannel*> channels = client->GetChannels();
+    std::string name = client->GetNickname();
+	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
 	client = channel->returnBot();
-	//client->GetMembers();
-	if (client == nullptr) {
-        std::cerr << "Error in Bot::announce: IRCClient pointer is null" << std::endl;
+	std::time_t t = std::time(NULL);
+    std::tm* local = std::localtime(&t);
+    std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + std::to_string(local->tm_hour) + ":" 
+       + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
+    std::vector<std::string> vec;
+	vec.push_back(name);
+	vec.push_back(msg);
+	const std::vector<std::string>& test = vec;
+	Command::handlePrivmsgCommand(client, test);
+}
+
+void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
+	std::string name = client->GetNickname();
+	if (client == nullptr){
+        std::cerr << "Error, No Bot in Channel" << std::endl;
         return;
     }
-    std::string msg = "Hello, I'm Bot_Gear, Type the prefix BOT_ followed by a command in caps, Use BOT_HELP for more.";
+	std::set<IRCChannel*> channels = client->GetChannels();
+	std::set<IRCChannel*>::iterator it = channels.begin();
+	IRCChannel* channel = *it;
+	client = channel->returnBot();
+	
+	std::string msg = "List of available commands: LISTMEMBERS, TIME, ANNOUNCE, BOMBTHREAT";
 
-	//client->GetServer()->clientSendData(client->GetFd(), RPL_WELCOME(client->GetNickname()));
-	//client->GetServer()->clientSendData(client->GetFd(), msg);
-	//parameters.push_back()
 	std::vector<std::string> vec;
-	vec.push_back("tpawson");
+	vec.push_back(name);
+	vec.push_back(msg);
+	const std::vector<std::string>& test = vec;
+	Command::handlePrivmsgCommand(client, test);
+}
+
+void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters) {
+    std::string name = client->GetNickname();
+	if (client == nullptr){
+        std::cerr << "Error, No Bot in Channel" << std::endl;
+        return;
+    }
+	std::set<IRCChannel*> channels = client->GetChannels();
+	std::set<IRCChannel*>::iterator it = channels.begin();
+	IRCChannel* channel = *it;
+	client = channel->returnBot();
+    std::string msg = "Hello, I'm Bot_Gear, Type the prefix BOT_ followed by a command in caps, Use BOT_HELP for more.";
+	//client->GetServer()->clientSendData(client->GetFd(), msg);
+
+	std::vector<std::string> vec;
+	vec.push_back(name);
 	vec.push_back(msg);
 	const std::vector<std::string>& test = vec;
 	Command::handlePrivmsgCommand(client, test);
 }
 
 void Bot::listMembers(IRCClient* client, const std::vector<std::string>& parameters){
-    std::set<IRCClient*> members = client->GetCurrentChannel()->GetMembers();
+    std::set<IRCChannel*> channels = client->GetChannels();
+	std::set<IRCChannel*>::iterator it = channels.begin();
+	IRCChannel* channel = *it;
+	std::set<IRCClient*> members = channel->GetMembers();
+	std::string name = client->GetNickname();
+	client = channel->returnBot();
+	std::string msg;
+	std::vector<std::string> vec;
+   	msg = "The current members in this channel are: ";
     
-    //loop through members broadcasting them to the channel
-    client->GetCurrentChannel()->broadcast("The current members in this channel are:\n");
-    for (std::set<IRCClient*>::iterator it = members.begin(); it != members.end(); ++it){
-        client->GetCurrentChannel()->broadcast("-" + (*it)->GetRealname() + "\n");
+	for (std::set<IRCClient*>::iterator it = members.begin(); it != members.end(); ++it){
+		msg += "-" + (*it)->GetRealname() + ", ";
     }
+	vec.push_back(name);
+	vec.push_back(msg);
+	const std::vector<std::string>& test = vec;
+	Command::handlePrivmsgCommand(client, test);
 }
-
-// static int asciiValue(const std::string& str) {
-//     int sum = 0;
-    
-//     for(char c : str)
-//         sum += static_cast<int>(c);
-//     return sum;
-// }
-
-
-// //terminal syntax will be BOT_CMD or /bot cmd
-// int Bot::cmd(std::string& cmd){
-//     int convert = asciiValue(cmd);
-//     switch(convert){
-//         case 1:
-    
-//             break;
-//         case 2:
-
-//             break;
-//         case 3:
-    
-//             break;
-//         case 4:
-
-//             break;
-//         case 5:
-
-//             break;
-//     }
-// }
 
 Bot::~Bot(){}

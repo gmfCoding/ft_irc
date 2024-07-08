@@ -25,6 +25,7 @@ void	IRCChannel::ChAddBot(IRCClient *client)
     std::cerr << "Exception while inserting bot into members: " << e.what() << std::endl;
 	}
     members.insert(bot);
+	
 	if (bot != NULL)
 	 	hasBot = true;
 }

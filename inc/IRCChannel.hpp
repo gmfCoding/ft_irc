@@ -4,7 +4,6 @@
 # include <string>
 # include <set>
 # include "Command.hpp"
-//# include "Bot.hpp"
 
 class IRCClient;
 //class Bot;
@@ -37,7 +36,7 @@ public:
 	int							GetUserLimit();
 	std::set<IRCClient*>		GetMembers() const;
 	IRCClient* 					GetMember() const;
-	IRCClient*					returnBot() const;
+	IRCClient*						returnBot() const;
 	const std::string&			GetName() const;
 	const std::string&			GetKey() const;
 	const std::string&			GetTopic() const;

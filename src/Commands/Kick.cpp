@@ -32,6 +32,8 @@ void Command::handleKickCommand(IRCClient* client, const std::vector<std::string
 		client->GetServer()->clientSendData(client->GetFd(), ERR_USERNOTINCHANNEL(client->GetNickname(), targetNick, channelName));
 		return ;
 	}
+	if (targetClient == channel->returnBot())
+		return ;
 	channel->broadcast(RPL_KICK(client->GetNickname(), channelName, targetNick, reason));
 	channel->removeMember(targetClient);
 }
