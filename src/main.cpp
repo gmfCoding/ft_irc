@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <cstdlib>
 #include <csignal>
 #include "GlobalVariables.hpp"
 #include "IRCServer.hpp"

@@ -10,7 +10,7 @@
 # include <unistd.h>
 # include <arpa/inet.h>
 # include <sstream>
-# include <limits.h>
+# include <limits>
 # include <string>
 # include <cstring>
 # include <fcntl.h>
