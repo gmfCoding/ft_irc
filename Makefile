@@ -54,7 +54,7 @@ DEPS = $(OBJS:.o=.d)
 ifeq ($(wildcard $(CXX)),)
 CXX = c++
 endif
-
+  
 WFLAGS =  -Wall -Werror -Wextra
 CPPFLAGS = -I$(DIRINC) -MMD -MP
 CXXFLAGS = $(DFLAGS) $(WFLAGS) -std=c++98 
@@ -137,7 +137,7 @@ $(DIROBJ):
 	-mkdir -p $(DIROBJ)
 	-@printf "${NC}"
 
-.PHONY: all re er fclean clean
+.PHONY: all re er fclean clean exec-clean obj-clean
 
 # COLORS
 export BGREEN = \033[1;32m
