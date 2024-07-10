@@ -22,8 +22,8 @@ private:
 	std::set<IRCClient*>			bannedClients;
 	bool							inviteOnly;
 	bool							topicRestricted;
-	bool							hasBot;
 	int								userLimit;
+	bool							hasBot;
 
 public:
 	IRCChannel();

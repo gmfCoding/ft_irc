@@ -22,6 +22,7 @@ void displayWelcomeMessage()
 
 void handleCtrlC(int sig)
 {
+	static_cast<void>(sig);
 	continueRunning = false;
 }
 

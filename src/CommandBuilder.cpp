@@ -1,7 +1,7 @@
 #include "CommandBuilder.hpp"
 #include "Bot.hpp"
 
-CommandBuilder::CommandBuilder(IRCServer* server) : server(server)
+CommandBuilder::CommandBuilder()
 {
 	if (availableCommands.empty())
 	{

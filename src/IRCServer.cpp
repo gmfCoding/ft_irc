@@ -197,10 +197,6 @@ void	IRCServer::clientAccept()
 		this->err = ERR_FCNTL;
 		return ;
 	}
-	struct pollfd clientPollFd;
-    clientPollFd.fd = clientFd;
-    clientPollFd.events = POLLIN;
-    clientPollFd.revents = 0;
 	std::string host = retriveHostName();
 	pollFds.push_back((struct pollfd){clientFd, POLLIN, 0});
 	clients[clientFd] = new IRCClient(clientFd, this, host);
@@ -275,7 +271,7 @@ void IRCServer::clientHandle(IRCClient* client)
 			    commandBuffer.erase(0, end + 2); // "\r\n"
 			else
 			    commandBuffer.erase(0, end + 1); // "\n"
-			CommandBuilder commandBuilder(this);
+			CommandBuilder commandBuilder;
 			commandBuilder.processCommand(client, rawCommand);
 		}
 		else
@@ -336,6 +332,8 @@ void IRCServer::serverShutdown()
 
 IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 {
+	if (nickname == "Bot_Gear")
+		return NULL;
 	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
 		if (kvp->second->GetNickname() == nickname)
 			return (kvp->second);

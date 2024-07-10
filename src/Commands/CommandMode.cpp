@@ -23,6 +23,7 @@ CommandMode::~CommandMode()
 
 void	CommandMode::handleInviteOnlyMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters)
 {
+	static_cast<void>(parameters);
 	channel->SetInviteOnly(set);
 	if (set)
 		channel->broadcast(RPL_MODE(client->GetNickname(), channel->GetName(), "+i", ""));
@@ -32,6 +33,7 @@ void	CommandMode::handleInviteOnlyMode(IRCChannel* channel, bool set, IRCClient*
 
 void	CommandMode::handleTopicRestrictionMode(IRCChannel* channel, bool set, IRCClient* client, const std::vector<std::string>& parameters)
 {
+	static_cast<void>(parameters);
 	channel->SetTopicRestricted(set);
 	if (set)
 		channel->broadcast(RPL_MODE(client->GetNickname(), channel->GetName(), "+t", ""));
@@ -66,6 +68,8 @@ void	CommandMode::handleOperatorPrivilegeMode(IRCChannel* channel, bool set, IRC
 		return;
 	}
 	IRCClient* targetClient = client->GetServer()->GetClientByNickname(parameters[0]);
+	if (targetClient == NULL)
+		return;
 	if (set)
 	{
 		channel->addOperator(targetClient);
@@ -125,8 +129,8 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 		return ;
 	}
 	bool set = true;
-	int parameterIndex = 2;
-	for (int i = 0; i < modeString.length(); ++i)
+	size_t parameterIndex = 2;
+	for (size_t i = 0; i < modeString.length(); ++i)
 	{
 		char mode = modeString[i];
 		if (mode == '+')

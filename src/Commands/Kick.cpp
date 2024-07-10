@@ -11,6 +11,8 @@ void Command::handleKickCommand(IRCClient* client, const std::vector<std::string
 	std::string targetNick = parameters[1];
 	std::string reason = (parameters.size() > 2) ? parameters[2] : "No reason";
 	IRCChannel* channel = client->GetServer()->GetChannel(channelName);
+	if (targetNick == "Bot_Gear")
+		return ;
 	if (!channel)
 	{
 		client->GetServer()->clientSendData(client->GetFd(), ERR_NOSUCHCHANNEL(client->GetNickname(), channelName));

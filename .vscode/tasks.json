@@ -6,7 +6,7 @@
         {
             "label": "Build Debug",
             "type": "shell",
-            "command": "make CONF=debug",
+            "command": "make CONF=debug CXX=/usr/bin/clang++",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

@@ -9,7 +9,8 @@
             "cwd": "${workspaceRoot}/",
             "externalConsole": false,
             "MIMode": "lldb",
-			"args": ["21345", "password"],
+			"miDebuggerPath": "/usr/bin/lldb",
+			"args": ["6667", "123"],
 			"program": "${workspaceFolder}/ircserv",
             "preLaunchTask": "Build Debug"
 		},
@@ -26,7 +27,6 @@
 			"program": "${workspaceFolder}/ircserv",
 			"args": ["6667", "123"],
 			"cwd": "${workspaceFolder}",
-			"preLaunchTask": "Build Debug"
 		}
 	]
 }

@@ -1,4 +1,5 @@
 #include "Bot.hpp"
+#include "StringUtils.hpp"
 
 Bot::Bot(int clientFd, IRCServer* server, const std::string& host) : IRCClient(clientFd, server, host){	
 	this->authLevel = AuthBot;
@@ -22,14 +23,14 @@ Bot::Bot() : IRCClient(0, NULL, NULL){
 
 Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
 	
-	if (chan == nullptr){
+	if (chan == NULL){
 		std::cerr << "Error: IRCChannel pointer is null in Bot::addbot" << std::endl;
-        return nullptr;
+        return NULL;
 	}
 	Bot* bot = new Bot(fd, server, "host");
-	if (bot == nullptr) {
+	if (bot == NULL) {
         std::cerr << "Error: Failed to allocate memory for Bot in Bot::addbot" << std::endl;
-        return nullptr;
+        return NULL;
     }
 	chan->botTrue();
 	return bot;
@@ -38,12 +39,13 @@ Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
 // need to check that the bot is in the channel to execute bot commands, a universal function for checking would work for all functs
 // macos only atm
 void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& parameters){
+	static_cast<void>(parameters);
     std::string name = client->GetNickname();
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
 	client = channel->returnBot();
-	if (client == nullptr){
+	if (client == NULL){
         std::cerr << "Error, No Bot in Channel" << std::endl;
         return;
     }
@@ -61,6 +63,7 @@ void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& paramete
 }
 
 void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
+	static_cast<void>(parameters);
     std::string name = client->GetNickname();
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
@@ -72,8 +75,8 @@ void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
 	client = channel->returnBot();
 	std::time_t t = std::time(NULL);
     std::tm* local = std::localtime(&t);
-    std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + std::to_string(local->tm_hour) + ":" 
-       + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
+    std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + IRCUtil::NumberToString(local->tm_hour) + ":" 
+       + IRCUtil::NumberToString(local->tm_min) + ":" + IRCUtil::NumberToString(local->tm_sec);
     std::vector<std::string> vec;
 	vec.push_back(name);
 	vec.push_back(msg);
@@ -82,6 +85,7 @@ void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
 }
 
 void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
+	static_cast<void>(parameters);
 	std::string name = client->GetNickname();
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
@@ -102,6 +106,7 @@ void Bot::help(IRCClient* client, const std::vector<std::string>& parameters){
 }
 
 void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters) {
+	static_cast<void>(parameters);
     std::string name = client->GetNickname();
 	std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
@@ -121,6 +126,7 @@ void Bot::announce(IRCClient* client, const std::vector<std::string>& parameters
 }
 
 void Bot::listMembers(IRCClient* client, const std::vector<std::string>& parameters){
+	static_cast<void>(parameters);
     std::set<IRCChannel*> channels = client->GetChannels();
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
