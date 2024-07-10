@@ -197,10 +197,6 @@ void	IRCServer::clientAccept()
 		this->err = ERR_FCNTL;
 		return ;
 	}
-	struct pollfd clientPollFd;
-    clientPollFd.fd = clientFd;
-    clientPollFd.events = POLLIN;
-    clientPollFd.revents = 0;
 	std::string host = retriveHostName();
 	pollFds.push_back((struct pollfd){clientFd, POLLIN, 0});
 	clients[clientFd] = new IRCClient(clientFd, this, host);

@@ -17,10 +17,10 @@ void	IRCChannel::ChAddBot(IRCClient *client)
 	if (bot == NULL)
 		 std::cerr << "Bot creation failed: bot is NULL" << std::endl;
 	try {
-    std::cerr << "Bot inserted into members successfully" << std::endl;
+    	std::cerr << "Bot inserted into members successfully" << std::endl;
 	} 
 	catch (const std::exception& e) {
-    std::cerr << "Exception while inserting bot into members: " << e.what() << std::endl;
+    	std::cerr << "Exception while inserting bot into members: " << e.what() << std::endl;
 	}
     members.insert(bot);
 	if (bot != NULL)
@@ -47,8 +47,7 @@ IRCClient* IRCChannel::returnBot() const {
 
 IRCChannel::~IRCChannel() { 
 	std::cout << "\033[1;33m" << "destructor called on channel" << "\033[0m" << std::endl; 
-		delete returnBot();
-	}
+}
 
 std::set<IRCClient*> IRCChannel::GetMembers() const { return members;}
 
@@ -125,6 +124,7 @@ void IRCChannel::channelShutDown(){
 			(*it)->removeChannel(this);
 		}
 	}
+	delete returnBot();
 	members.clear();
 	if (operators.size() > 0){
 		for(MemberIterator it = operators.begin(); it != operators.end(); ++it){

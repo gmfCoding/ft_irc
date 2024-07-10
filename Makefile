@@ -55,7 +55,9 @@ LIB-I = $(patsubst %,-I%,$(dir $(LIBS))) -I$(DIRLIB)
 LIB-l = $(subst lib,-l,$(basename $(notdir $(LIBSF))))
 LIB-L = $(patsubst %,-L$(DIRLIB)/%, $(dir $(LIBSF)))
 
+ifeq ($(wildcard $(CXX)),)
 CXX = c++
+endif
 
 WFLAGS =  -Wall -Werror -Wextra
 CPPFLAGS = -I$(DIRINC) $(LIB-I) -MMD -MP

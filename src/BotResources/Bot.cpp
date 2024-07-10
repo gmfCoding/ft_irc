@@ -1,4 +1,5 @@
 #include "Bot.hpp"
+#include "StringUtils.hpp"
 
 Bot::Bot(int clientFd, IRCServer* server, const std::string& host) : IRCClient(clientFd, server, host){	
 	this->authLevel = AuthBot;
@@ -74,8 +75,8 @@ void Bot::time(IRCClient* client, const std::vector<std::string>& parameters){
 	client = channel->returnBot();
 	std::time_t t = std::time(NULL);
     std::tm* local = std::localtime(&t);
-    std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + std::to_string(local->tm_hour) + ":" 
-       + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
+    std::string msg = "Bot " + client->GetRealname() + ": Current local time (hrs,mins,secs): " + IRCUtil::NumberToString(local->tm_hour) + ":" 
+       + IRCUtil::NumberToString(local->tm_min) + ":" + IRCUtil::NumberToString(local->tm_sec);
     std::vector<std::string> vec;
 	vec.push_back(name);
 	vec.push_back(msg);
