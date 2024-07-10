@@ -143,7 +143,7 @@ void	CommandMode::handleModeCommand(IRCClient* client, const std::vector<std::st
 			if (kvp != modeHandlers.end())
 			{
 				std::vector<std::string> modeParameters;
-				if (mode == 'k' || mode == 'l' || mode == 'o')//if we add more operator modes that take parameters add them here too
+				if (set && (mode == 'k' || mode == 'l' || mode == 'o'))//if we add more operator modes that take parameters add them here too
 				{
 					if (parameterIndex < parameters.size())
 					{
