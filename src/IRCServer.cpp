@@ -336,6 +336,8 @@ void IRCServer::serverShutdown()
 
 IRCClient* IRCServer::GetClientByNickname(const std::string& nickname)
 {
+	if (nickname == "Bot_Gear")
+		return NULL;
 	for (ClientIterator kvp = clients.begin(); kvp != clients.end(); ++kvp)
 		if (kvp->second->GetNickname() == nickname)
 			return (kvp->second);

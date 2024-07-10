@@ -9,7 +9,7 @@
             "cwd": "${workspaceRoot}/",
             "externalConsole": false,
             "MIMode": "lldb",
-			"args": ["21345", "password"],
+			"args": ["6667", "123"],
 			"program": "${workspaceFolder}/ircserv",
             "preLaunchTask": "Build Debug"
 		},

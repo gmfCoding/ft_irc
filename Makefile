@@ -77,26 +77,19 @@ ifneq (,$(findstring dsym,$(CONF)))
 OPTS = debug
 endif
 
-ifneq (,$(findstring none,$(OPTS)))
-OPFLAG = -O0
-endif
 ifneq (,$(findstring debug,$(OPTS)))
 	OPFLAG = -O0
 	DFLAGS += -g3
 endif
-ifneq (,$(findstring fdeb,$(OPTS)))
-	OPFLAG = -O1 -march=native
-	DFLAGS += -g3
-endif
 ifneq (,$(findstring fsan,$(OPTS)))
 
-# -fno-sanitize-ignorelist -fsanitize-ignorelist=ignorelist.txt
+#= -fno-sanitize-ignorelist -fsanitize-ignorelist=ignorelist.txt
 # Compile with selected sanitizer:
 # And when using other sanitizers such as memory or undefined, it may be useful to not prematurely stop,
 # Use UBSAN_OPTIONS=halt_on_error=0 (need -fs..-recover=..) or equivelent
 # Also might be nice to redirect stderr to a file
 # USE 
-	DFLAGS += -fsanitize=$(SAN) -fsanitize-recover=$(SAN) 
+DFLAGS += -fsanitize=$(SAN) -fsanitize-recover=$(SAN) 
 endif
 ifneq (,$(findstring gmon,$(OPTS)))
 	PGFLAGS += -pg

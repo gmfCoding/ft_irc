@@ -22,14 +22,14 @@ Bot::Bot() : IRCClient(0, NULL, NULL){
 
 Bot* Bot::addbot(IRCChannel* chan, IRCServer* server, int fd){
 	
-	if (chan == nullptr){
+	if (chan == NULL){
 		std::cerr << "Error: IRCChannel pointer is null in Bot::addbot" << std::endl;
-        return nullptr;
+        return NULL;
 	}
 	Bot* bot = new Bot(fd, server, "host");
-	if (bot == nullptr) {
+	if (bot == NULL) {
         std::cerr << "Error: Failed to allocate memory for Bot in Bot::addbot" << std::endl;
-        return nullptr;
+        return NULL;
     }
 	chan->botTrue();
 	return bot;
@@ -44,7 +44,7 @@ void Bot::bombThreat(IRCClient* client, const std::vector<std::string>& paramete
 	std::set<IRCChannel*>::iterator it = channels.begin();
 	IRCChannel* channel = *it;
 	client = channel->returnBot();
-	if (client == nullptr){
+	if (client == NULL){
         std::cerr << "Error, No Bot in Channel" << std::endl;
         return;
     }

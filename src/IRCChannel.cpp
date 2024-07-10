@@ -42,7 +42,7 @@ IRCClient* IRCChannel::returnBot() const {
 		if ((*it)->GetUsername() == "Bot_Gear")
 			return *it;
 	}
-	return nullptr;
+	return NULL;
 }
 
 IRCChannel::~IRCChannel() { 
@@ -58,7 +58,7 @@ IRCClient* IRCChannel::GetMember() const {
 		return *(members.begin());
 	}
 	else
-		return nullptr;
+		return NULL;
 }
 
 int							IRCChannel::GetUserLimit() { return (userLimit); }

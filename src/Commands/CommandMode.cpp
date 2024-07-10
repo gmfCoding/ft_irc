@@ -68,6 +68,8 @@ void	CommandMode::handleOperatorPrivilegeMode(IRCChannel* channel, bool set, IRC
 		return;
 	}
 	IRCClient* targetClient = client->GetServer()->GetClientByNickname(parameters[0]);
+	if (targetClient == NULL)
+		return;
 	if (set)
 	{
 		channel->addOperator(targetClient);

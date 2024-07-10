@@ -9,6 +9,8 @@ void Command::handleInviteCommand(IRCClient* client, const std::vector<std::stri
 	}
 	std::string targetNick = parameters[0];
 	std::string channelName = parameters[1];
+	if (targetNick == "Bot_Gear")
+		return ;
 	IRCChannel* currentChannel = client->GetServer()->GetChannel(channelName);
 	if (!currentChannel)
 	{
