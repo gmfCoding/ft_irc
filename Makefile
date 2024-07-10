@@ -43,7 +43,6 @@ NAME = ircserv
 DIRSRC = src
 DIROBJ = obj/$(CONF)
 DIRINC = inc
-DIRLIB = lib
 
 # All relative to Makefile's folder
 SRCS = $(patsubst %.cpp,$(DIRSRC)/%.cpp, $(SRCSF))
@@ -51,19 +50,15 @@ OBJS = $(SRCS:$(DIRSRC)/%.cpp=$(DIROBJ)/%.o)
 INCS = $(patsubst %.hpp,$(DIRINC)/%.hpp, $(INCSF))
 DEPS = $(OBJS:.o=.d)
 
-LIB-I = $(patsubst %,-I%,$(dir $(LIBS))) -I$(DIRLIB)
-LIB-l = $(subst lib,-l,$(basename $(notdir $(LIBSF))))
-LIB-L = $(patsubst %,-L$(DIRLIB)/%, $(dir $(LIBSF)))
-
+# import CXX environment variable otherwise use c++
 ifeq ($(wildcard $(CXX)),)
 CXX = c++
 endif
 
 WFLAGS =  -Wall -Werror -Wextra
-CPPFLAGS = -I$(DIRINC) $(LIB-I) -MMD -MP
-CXXFLAGS = $(OPFLAG) $(DFLAGS) $(XCFLAGS) $(WFLAGS) -std=c++98 
-LDFLAGS = $(OPFLAG) $(DFLAGS) $(XLDFLAGS)
-#OPFLAG = -O3 -flto -march=native -mtune=native -msse4.2 
+CPPFLAGS = -I$(DIRINC) -MMD -MP
+CXXFLAGS = $(DFLAGS) $(WFLAGS) -std=c++98 
+LDFLAGS = $(DFLAGS)
 
 OPTS = $(OPT)
 SAN = address 
@@ -80,21 +75,7 @@ OPTS = debug
 endif
 
 ifneq (,$(findstring debug,$(OPTS)))
-	OPFLAG = -O0
 	DFLAGS += -g3
-endif
-ifneq (,$(findstring fsan,$(OPTS)))
-
-#= -fno-sanitize-ignorelist -fsanitize-ignorelist=ignorelist.txt
-# Compile with selected sanitizer:
-# And when using other sanitizers such as memory or undefined, it may be useful to not prematurely stop,
-# Use UBSAN_OPTIONS=halt_on_error=0 (need -fs..-recover=..) or equivelent
-# Also might be nice to redirect stderr to a file
-# USE 
-DFLAGS += -fsanitize=$(SAN) -fsanitize-recover=$(SAN) 
-endif
-ifneq (,$(findstring gmon,$(OPTS)))
-	PGFLAGS += -pg
 endif
 
 ifeq ($(EXTRA),1)
@@ -116,7 +97,7 @@ $(BUILT_MARKER):
 	@touch $(BUILT_MARKER)
 
 # OBJ TO PROJECT
-$(NAME): $(LIBS) $(OBJS) $(BUILT_MARKER)
+$(NAME): $(OBJS) $(BUILT_MARKER)
 	-@printf "${BLUE}"
 	$(CXX) $(PGFLAGS) $(OBJS) $(LDFLAGS) -o $@
 	-@printf "${NC}"
@@ -128,16 +109,22 @@ $(OBJS): $(DIROBJ)%.o : $(DIRSRC)%.cpp $(INCS) | $(DIROBJ)
 	-$(CXX) $(PGFLAGS) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 	-@printf "${NC}"
 
-# CLEANING
-fclean: clean
+exec-clean:
 	-@printf "${BRED}Cleaning executable!\n${RED}"
 	-rm -f $(NAME)
 	-@printf "${NC}"
 
-clean:
+obj-clean:
 	-@printf "${BYELLOW}Cleaning objects!\n${RED}"
-	-rm -rf $(DIROBJ)
+	-rm -rf obj
 	-@printf "${NC}"
+
+# CLEANING
+fclean: exec-clean clean
+
+clean: obj-clean
+
+er: exec-clean all
 
 re: fclean all
 
@@ -150,7 +137,7 @@ $(DIROBJ):
 	-mkdir -p $(DIROBJ)
 	-@printf "${NC}"
 
-.PHONY: all re fclean clean libclean
+.PHONY: all re er fclean clean
 
 # COLORS
 export BGREEN = \033[1;32m
