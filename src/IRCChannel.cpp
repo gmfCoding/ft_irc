@@ -7,10 +7,8 @@
 // IRCChannel::~IRCChannel() {
 // 	channelShutDown();
 // }
-IRCChannel::IRCChannel() : userLimit(0), inviteOnly(false), topicRestricted(false) { return ; }
-IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), userLimit(0), inviteOnly(false), topicRestricted(false), hasBot(false) { 
-	//error below
-	//std::cerr << "Bot creation failed: bot is NULL" << std::endl;
+IRCChannel::IRCChannel() : inviteOnly(false), topicRestricted(false), userLimit(0) { return ; }
+IRCChannel::IRCChannel(const std::string& channelName) : name(channelName), inviteOnly(false), topicRestricted(false), userLimit(0), hasBot(false) { 
 	 return;
 }
 void	IRCChannel::ChAddBot(IRCClient *client)
@@ -82,7 +80,7 @@ void						IRCChannel::inviteClient(IRCClient* client) { invited.insert(client); 
 bool						IRCChannel::hasKey() const { return (!key.empty()); }
 bool						IRCChannel::hasBotBool() { return hasBot;}
 bool						IRCChannel::isTopicRestricted() const { return (topicRestricted); }
-bool						IRCChannel::isFull() const { return (members.size() >= userLimit); }
+bool						IRCChannel::isFull() const { return (members.size() >= static_cast<size_t>(userLimit)); }
 bool						IRCChannel::isOperator(IRCClient* client) const { return (operators.find(client) != operators.end()); }
 bool						IRCChannel::isMember(IRCClient* client) const { return (members.find(client) != members.end()); }
 bool						IRCChannel::isInviteOnly() const { return inviteOnly; }
@@ -139,4 +137,4 @@ void IRCChannel::channelShutDown(){
 bool IRCChannel::isBanned(IRCClient* client) const { return bannedClients.find(client) != bannedClients.end(); }
 void IRCChannel::banClient(IRCClient* client) { bannedClients.insert(client); }
 void IRCChannel::unbanClient(IRCClient* client) { bannedClients.erase(client); }
-bool IRCChannel::canSendMessage(IRCClient* client) const { return (true); }
+bool IRCChannel::canSendMessage(IRCClient* client) const { static_cast<void>(client);return (true); }

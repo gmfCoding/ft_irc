@@ -57,7 +57,7 @@ LIB-L = $(patsubst %,-L$(DIRLIB)/%, $(dir $(LIBSF)))
 
 CXX = c++
 
-WFLAGS =  #-Wall -Werror -Wextra
+WFLAGS =  -Wall -Werror -Wextra
 CPPFLAGS = -I$(DIRINC) $(LIB-I) -MMD -MP
 CXXFLAGS = $(OPFLAG) $(DFLAGS) $(XCFLAGS) $(WFLAGS) -std=c++98 
 LDFLAGS = $(OPFLAG) $(DFLAGS) $(XLDFLAGS)

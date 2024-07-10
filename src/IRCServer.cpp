@@ -275,7 +275,7 @@ void IRCServer::clientHandle(IRCClient* client)
 			    commandBuffer.erase(0, end + 2); // "\r\n"
 			else
 			    commandBuffer.erase(0, end + 1); // "\n"
-			CommandBuilder commandBuilder(this);
+			CommandBuilder commandBuilder;
 			commandBuilder.processCommand(client, rawCommand);
 		}
 		else

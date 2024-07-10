@@ -1,7 +1,7 @@
 #include "IRCClient.hpp"
 #include "Command.hpp"
 //IRCClient::IRCClient() : fd(-1) {}
-IRCClient::IRCClient(int clientFd, IRCServer* server, const std::string& host) : fd(clientFd), server(server), channelsIn(), markedForDeletion(false), hostname(host){	
+IRCClient::IRCClient(int clientFd, IRCServer* server, const std::string& host) : fd(clientFd), hostname(host), server(server), channelsIn(), markedForDeletion(false){	
 	this->authLevel = AuthPublic;
 	for (int i = 0; i < AUTH_STATUS_COUNT; ++i)
 		Auth[i] = false;
